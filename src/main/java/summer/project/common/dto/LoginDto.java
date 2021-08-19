@@ -3,6 +3,7 @@ package summer.project.common.dto;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 
@@ -17,7 +18,7 @@ public class LoginDto implements Serializable {
     @Size(message = "密码为6-18位", min = 6, max = 18)
     private String password;
 
-//    @Size(message = "1位", min = 1, max = 1)
+//    @NotNull(message = "是否记住")
 //    private Long remember;
 }
 
