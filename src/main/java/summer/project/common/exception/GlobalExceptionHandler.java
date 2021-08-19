@@ -2,6 +2,7 @@ package summer.project.common.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.ShiroException;
+import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
@@ -57,8 +58,18 @@ public class GlobalExceptionHandler {
     public Result handler(UnauthorizedException e ) {
         log.error("未授权异常：----------------{}", e);
 
-        return Result.fail("您无权限进行此操作。");
+        return Result.fail("您无权限进行此操作，原因是未授权。");
     }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(value = UnauthenticatedException.class)
+    public Result handler(UnauthenticatedException e ) {
+        log.error("未认证异常：----------------{}", e);
+
+        return Result.fail("您无权限进行此操作，原因是未认证。");
+    }
+
+
 
 
 
