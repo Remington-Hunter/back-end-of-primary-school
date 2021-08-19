@@ -20,13 +20,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+// 自定义的拦截器
 @Component
 public class JwtFilter extends AuthenticatingFilter {
     @Autowired
     JwtUtils jwtUtils;
 
     @Override
-    protected AuthenticationToken createToken(ServletRequest servletRequest, ServletResponse servletResponse) throws Exception {
+    protected AuthenticationToken createToken(ServletRequest servletRequest, ServletResponse servletResponse) {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         String jwt = request.getHeader("Authorization");
         if (!StringUtils.hasLength(jwt)) {
