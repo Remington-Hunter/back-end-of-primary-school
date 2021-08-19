@@ -6,6 +6,8 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import summer.project.entity.TestUser;
+import summer.project.service.TestUserService;
 import summer.project.util.JwtUtils;
 
 @Component
@@ -14,10 +16,11 @@ public class AccountRealm extends AuthorizingRealm {
     @Autowired
     JwtUtils jwtUtils;
 
-//    @Autowired
-//    TestUserService userService;
+    @Autowired
+    TestUserService userService;
 
     // 必须支持JwtToken
+
 //    @Override
 //    public boolean supports(AuthenticationToken token) {
 //        return token instanceof JwtToken;
@@ -32,13 +35,13 @@ public class AccountRealm extends AuthorizingRealm {
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
         System.out.println("认证");
         UsernamePasswordToken token = (UsernamePasswordToken) authenticationToken;
-//        TestUser user = userService.queryUserByName(token.getUsername());
-//        if (user == null) {
-//            // 报出Unknown...异常
-//            return null;
-//        }
-//        return new SimpleAuthenticationInfo("", user.getPassword(), "");
-        return null;
+        TestUser user = userService.queryUserByName(token.getUsername());
+        if (user == null) {
+            // 报出Unknown...异常
+            return null;
+        }
+        return new SimpleAuthenticationInfo("", user.getPassword(), "");
+//        return null;
 
 
         /*JwtToken jwtToken = (JwtToken) authenticationToken;
