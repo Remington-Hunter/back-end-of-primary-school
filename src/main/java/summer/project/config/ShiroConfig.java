@@ -55,8 +55,6 @@ public class ShiroConfig {
         Map<String, String> filterMap = new LinkedHashMap<>();
 
         filterMap.put("/**", "jwt"); // 所有的登陆链接都需要经过这个过滤器
-//        filterMap.put("/test", "anon");
-//        filterMap.put("/t1", "perms[user:add]");
         chainDefinition.addPathDefinitions(filterMap);
         return chainDefinition;
     }

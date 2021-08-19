@@ -11,6 +11,7 @@ import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -76,8 +77,15 @@ public class AccountController {
     }
 
     @PostMapping("/t1")
-    @RequiresAuthentication
+    @RequiresPermissions("user:add")
     public Result test1() {
+
+        return Result.succeed(200, "测试成功", null);
+    }
+
+    @PostMapping("/t2")
+    @RequiresPermissions("user:update")
+    public Result test2() {
 
         return Result.succeed(200, "测试成功", null);
     }

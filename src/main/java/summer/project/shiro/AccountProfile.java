@@ -13,28 +13,8 @@ public class AccountProfile implements Serializable {
 
     private String username;
 
-    private String email;
+    private String password;
 
-    private String phone;
-
-    private Integer isWriter;
-
-    private Integer isVip;
-
-    private Integer isEdit;
-
-    private Integer isReviewer;
-
-    private Integer status;
-
-    private String description;
-
-    private LocalDate birth;
-
-    private Integer gender;
-
-    private String avatar;
-
-    private LocalDateTime lastLogin;
+    private String perms;
 
 }

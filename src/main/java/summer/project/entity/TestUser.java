@@ -30,5 +30,5 @@ public class TestUser implements Serializable {
 
     private String password;
 
-
+    private String perms;
 }
