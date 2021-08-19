@@ -1,0 +1,64 @@
+spring:
+  session:
+    store-type: redis
+  datasource:
+    username: root
+    password: Zcd_13325015108
+    url: jdbc:mysql://localhost:3306/publishing?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    initialSize: 5
+    minIdle: 5
+    maxActive: 20
+    maxWait: 60000
+    time-between-eviction-runs-millis: 60000
+    min-evictable-idle-time-millis: 300000
+    test-while-idle: true
+    pool-prepared-statements: true
+    validation-query: SELECT 1 FROM DUAL
+    test-on-borrow: false
+    test-on-return: false
+    filters: stat,wall,log4j
+    maxPoolPreparedStatementPerConnectionSize: 20
+    useGlobalDataSourceStat: true
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
+  redis:
+    host: 127.0.0.1
+    #    port: 6379
+    database: 0
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+  application:
+    name: admin
+  profiles:
+    active: dev
+#mybatis-plus
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**Mapper.xml
+  type-aliases-package: top.azur1tee.entity
+publishing:
+  jwt:
+    #    加密密钥
+    secret: f4e2e52034348f86b67cde581c0f9eb5
+    #    有效期7天
+    expire: 604800
+
+    header: Authorization
+#shiro-redis:
+#  enabled: true
+#  redis-manager:
+#    host: 127.0.0.1:6379
+#    database: 0
+server:
+  port: 8081
+  address: localhost
+#spring.redis.pool.max-idle=8
+#spring.redis.pool.min-idle=0
+#spring.redis.pool.max-active=8
+#spring.redis.pool.max-wait=-1
+storage:
+  pathname: /Users/jerryZhao/Desktop/sestore/
+mconfig:
+  swagger-ui-open: true
