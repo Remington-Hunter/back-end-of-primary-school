@@ -26,4 +26,6 @@ public class QuestionDto implements Serializable {
     Integer type;
 
     List<OptionDto> optionList;
+
+    private String answer;
 }

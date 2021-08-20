@@ -7,6 +7,7 @@ import java.io.Serializable;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
@@ -20,6 +21,7 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
+@NoArgsConstructor
 public class Question implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -45,5 +47,13 @@ public class Question implements Serializable {
 
     private Long point;
 
+    private String answer;
 
+    public Question(Long questionnaireId, String content, String answer, Long point, Integer type) {
+        this.questionnaire = questionnaireId;
+        this.content = content;
+        this.answer = answer;
+        this.point = point;
+        this.type = type;
+    }
 }

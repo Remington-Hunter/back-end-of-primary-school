@@ -63,3 +63,10 @@ storage:
   pathname: /Users/jerryZhao/Desktop/sestore/
 mconfig:
   swagger-ui-open: true
+
+  # ===== 自定义swagger配置 ===== #
+swagger:
+  enable: true
+  application-name: ${spring.application.name}
+  application-version: 1.0
+  application-description: summer2021问卷星球

@@ -1,5 +1,6 @@
 package summer.project.common.dto;
 
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -8,6 +9,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
+@ApiModel
 public class QuestionnaireDto {
     private Long id;
 
