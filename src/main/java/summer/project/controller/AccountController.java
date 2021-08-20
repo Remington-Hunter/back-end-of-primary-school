@@ -24,6 +24,7 @@ import summer.project.service.UserService;
 import summer.project.util.JwtUtils;
 
 import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 @Api(tags = {"登录，认证，退出等操作"})
@@ -129,6 +130,15 @@ public class AccountController {
 
         return Result.succeed(200, "测试成功", null);
     }
+
+    @ApiOperation(value = "后端测试用端口")
+    @PostMapping("/test")
+    public Result test() {
+
+        return Result.succeed(200, "测试成功", LocalDateTime.now());
+    }
+
+
 
 //    @PostMapping
 

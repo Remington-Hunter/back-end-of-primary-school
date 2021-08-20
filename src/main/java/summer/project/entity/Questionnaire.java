@@ -1,6 +1,7 @@
 package summer.project.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.time.LocalDateTime;
 import java.io.Serializable;
@@ -46,6 +47,7 @@ public class Questionnaire implements Serializable {
 
     private Integer stopping;
 
+    @TableField("`limit`")
     private Long limit;
 
     private Integer column13;
@@ -55,4 +57,23 @@ public class Questionnaire implements Serializable {
     private Long needNum;
 
 
+    public Questionnaire(Long userId,
+                         String title,
+                         String description,
+                         LocalDateTime now,
+                         LocalDateTime startTime,
+                         LocalDateTime endTime,
+                         Long answerNum,
+                         Long needNum,
+                         Long limit) {
+        this.userId = userId;
+        this.title = title;
+        this.description = description;
+        this.createTime = now;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.answerNum = answerNum;
+        this.needNum = needNum;
+        this.limit = limit;
+    }
 }

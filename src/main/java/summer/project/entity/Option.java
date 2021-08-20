@@ -1,8 +1,11 @@
 package summer.project.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
+
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -18,6 +21,7 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
+@TableName("`option`")
 public class Option implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -29,11 +33,16 @@ public class Option implements Serializable {
 
     private Long questionId;
 
+    @TableField("`limit`")
     private Long limit;
 
     private String number;
 
-    private String answer;
 
-
+    public Option(Long id, String content, Long limit, String number) {
+        this.questionId = id;
+        this.content = content;
+        this.limit = limit;
+        this.number = number;
+    }
 }
