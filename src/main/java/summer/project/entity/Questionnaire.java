@@ -55,4 +55,12 @@ public class Questionnaire implements Serializable {
     private Long needNum;
 
 
+    public Questionnaire(Long userId, String title, String description, LocalDateTime now, LocalDateTime startTime, LocalDateTime endTime) {
+        this.userId = userId;
+        this.title = title;
+        this.description = description;
+        this.createTime = now;
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
 }
