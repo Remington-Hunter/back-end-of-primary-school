@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.io.Serializable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
@@ -20,6 +21,7 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
+@NoArgsConstructor
 public class Questionnaire implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -31,6 +33,7 @@ public class Questionnaire implements Serializable {
 
     private String title;
 
+    @TableField("`description`")
     private String description;
 
     private LocalDateTime createTime;
@@ -39,6 +42,7 @@ public class Questionnaire implements Serializable {
 
     private LocalDateTime endTime;
 
+    @TableField("`using`")
     private Integer using;
 
     private Integer preparing;
@@ -47,8 +51,11 @@ public class Questionnaire implements Serializable {
 
     private Integer stopping;
 
+    private Integer deleted;
+
     @TableField("`limit`")
     private Long limit;
+
 
     private Long needNum;
 
