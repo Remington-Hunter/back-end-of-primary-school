@@ -3,10 +3,8 @@ package summer.project.controller;
 
 import cn.hutool.core.lang.Assert;
 import cn.hutool.crypto.SecureUtil;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import io.swagger.annotations.*;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +26,7 @@ import summer.project.entity.Questionnaire;
 import summer.project.service.OptionService;
 import summer.project.service.QuestionService;
 import summer.project.service.QuestionnaireService;
+import summer.project.shiro.AccountProfile;
 import summer.project.util.ShiroUtil;
 
 import javax.annotation.Resource;
@@ -223,5 +222,16 @@ public class QuestionnaireController {
         return Result.succeed(md5);
     }
 
+    @RequiresAuthentication
+    @PostMapping("/get_questionnaire_list")
+    @ApiOperation(value = "获得所有的问卷的基本信息", notes = "带着Authorization请求头，不需要参数")
+    @ApiResponses(
+            @ApiResponse(code = 200, message = "你的data长这个样")
+    )
+    public Result getQuestionnaireList() {
+        Long userId = ShiroUtil.getProfile().getId();
+        List<Questionnaire> questionnaireList = questionnaireService.list(new QueryWrapper<Questionnaire>().eq("user_id", userId));
+        return Result.succeed(questionnaireList);
+    }
 
 }
