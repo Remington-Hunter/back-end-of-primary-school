@@ -255,7 +255,14 @@ public class QuestionnaireController {
     @PostMapping("/delete_questionnaire")
     @ApiOperation(value = "将回收站的问卷直接删除", notes = "直接发送问卷的id，发form data")
     public Result deleteQuestionnaire(@ApiParam(value = "要彻底删除的问卷id", required = true) Long id) {
+        Long userId = ShiroUtil.getProfile().getId();
+        Questionnaire questionnaire = questionnaireService.getById(id);
+        Assert.notNull(questionnaire, "问卷不存在");
+        Assert.isTrue(userId.equals(questionnaire.getUserId()), "你无权操作此问卷！");
+        Assert.isTrue(questionnaire.getDeleted().equals(1), "请先将问卷放入回收站。");
+        questionnaireService.removeById(id);
 
+        return Result.succeed("该问卷已删除。");
     }
 
 }
