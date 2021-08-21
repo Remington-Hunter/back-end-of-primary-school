@@ -89,7 +89,8 @@ public class QuestionnaireController {
                             questionDto.getAnswer(),
                             questionDto.getPoint(),
                             questionDto.getType(),
-                            questionDto.getNumber()
+                            questionDto.getNumber(),
+                            questionDto.getRequired()
                     );
                     questionService.save(question);
                     for (OptionDto optionDto : questionDto.getOptionList()) {
