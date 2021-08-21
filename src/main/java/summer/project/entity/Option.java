@@ -45,4 +45,10 @@ public class Option implements Serializable {
         this.limit = limit;
         this.number = number;
     }
+
+    public Option(String content, Long limit, String number) {
+        this.content = content;
+        this.limit = limit;
+        this.number = number;
+    }
 }
