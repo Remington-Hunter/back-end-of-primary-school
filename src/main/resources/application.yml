@@ -60,7 +60,7 @@ server:
 #spring.redis.pool.max-active=8
 #spring.redis.pool.max-wait=-1
 storage:
-  pathname: /home/ubuntu/Project/summer2021/sestore/
+  pathname: /Users/jerryzhao/Desktop/sestore/
 mconfig:
   swagger-ui-open: true
 
