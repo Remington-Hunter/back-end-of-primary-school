@@ -25,8 +25,6 @@ public class QuestionnaireDto {
 
     private Long limit;
 
-    private Integer column13;
-
     private Long answerNum;
 
     private Long needNum;

@@ -1,18 +1,17 @@
 package summer.project.shiro;
 
 import cn.hutool.core.bean.BeanUtil;
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import summer.project.entity.TestUser;
 import summer.project.service.TestUserService;
 import summer.project.util.JwtUtils;
+import summer.project.util.ShiroUtil;
 
 @Component
 public class AccountRealm extends AuthorizingRealm {
@@ -33,9 +32,7 @@ public class AccountRealm extends AuthorizingRealm {
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
         System.out.println("授权");
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-//        info.addStringPermission("user:add");
-        Subject subject = SecurityUtils.getSubject();
-        AccountProfile principal = (AccountProfile) subject.getPrincipal();
+        AccountProfile principal = ShiroUtil.getProfile();
 
         info.addStringPermission(principal.getPerms());
 
