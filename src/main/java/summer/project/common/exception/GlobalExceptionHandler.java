@@ -53,6 +53,8 @@ public class GlobalExceptionHandler {
         return Result.fail(objectError.getDefaultMessage());
     }
 
+
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(value = UnauthorizedException.class)
     public Result handler(UnauthorizedException e ) {
