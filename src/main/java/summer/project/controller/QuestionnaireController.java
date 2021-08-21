@@ -76,7 +76,6 @@ public class QuestionnaireController {
                         LocalDateTime.now(),
                         questionnaireDto.getStartTime(),
                         questionnaireDto.getEndTime(),
-                        questionnaireDto.getAnswerNum(),
                         questionnaireDto.getNeedNum(),
                         questionnaireDto.getLimit()
                 );
@@ -117,6 +116,19 @@ public class QuestionnaireController {
             }
             if (!questionnaire.getUserId().equals(ShiroUtil.getProfile().getId())) {
                 return Result.fail("无权限修改他人问卷。");
+            }
+            try {
+                questionnaire.setId(questionnaireDto.getId());
+                questionnaire.setCreateTime(questionnaireDto.getEndTime());
+                questionnaire.setTitle(questionnaireDto.getTitle());
+                questionnaire.setStartTime(questionnaireDto.getStartTime());
+                questionnaire.setEndTime(questionnaireDto.getEndTime());
+                questionnaire.setNeedNum(questionnaireDto.getNeedNum());
+                questionnaire.setLimit(questionnaire.getLimit());
+                questionnaireService.updateById(questionnaire);
+            } catch (Exception e) {
+                transactionManager.rollback(status);
+                return Result.fail("保存失败！");
             }
         }
 

@@ -50,8 +50,6 @@ public class Questionnaire implements Serializable {
     @TableField("`limit`")
     private Long limit;
 
-    private Long answerNum;
-
     private Long needNum;
 
 
@@ -61,7 +59,6 @@ public class Questionnaire implements Serializable {
                          LocalDateTime now,
                          LocalDateTime startTime,
                          LocalDateTime endTime,
-                         Long answerNum,
                          Long needNum,
                          Long limit) {
         this.userId = userId;
@@ -70,7 +67,6 @@ public class Questionnaire implements Serializable {
         this.createTime = now;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.answerNum = answerNum;
         this.needNum = needNum;
         this.limit = limit;
     }
