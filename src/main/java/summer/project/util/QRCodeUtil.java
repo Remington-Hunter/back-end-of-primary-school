@@ -34,20 +34,20 @@ public class QRCodeUtil {
    /**
     * 默认宽度
     */
-   private static final Integer WIDTH = 140;
+   private static final Integer WIDTH = 480;
    /**
     * 默认高度
     */
-   private static final Integer HEIGHT = 140;
+   private static final Integer HEIGHT = 480;
 
    /**
     * LOGO 默认宽度
     */
-   private static final Integer LOGO_WIDTH = 22;
+   private static final Integer LOGO_WIDTH = 90;
    /**
     * LOGO 默认高度
     */
-   private static final Integer LOGO_HEIGHT = 22;
+   private static final Integer LOGO_HEIGHT = 90;
 
    /**
     * 图片格式
