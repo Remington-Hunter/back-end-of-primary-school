@@ -59,6 +59,7 @@ public class Questionnaire implements Serializable {
     @TableField("`limit`")
     private Long limit;
 
+    private Long answerNum;
 
     private Long needNum;
 
