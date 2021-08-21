@@ -25,8 +25,6 @@ public class QuestionnaireDto {
 
     private Long limit;
 
-    private Long answerNum;
-
     private Long needNum;
 
     List<QuestionDto> questionList;

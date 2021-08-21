@@ -31,4 +31,7 @@ public class QuestionDto implements Serializable {
 
     @NotNull(message = "请提供题号")
     private Long number;
+
+    @NotNull(message = "题目是否必填")
+    private Integer required;
 }

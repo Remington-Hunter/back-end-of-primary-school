@@ -51,12 +51,15 @@ public class Question implements Serializable {
 
     private Long number;
 
-    public Question(Long questionnaireId, String content, String answer, Long point, Integer type, Long number) {
+    private Integer required;
+
+    public Question(Long questionnaireId, String content, String answer, Long point, Integer type, Long number, Integer required) {
         this.questionnaire = questionnaireId;
         this.content = content;
         this.answer = answer;
         this.point = point;
         this.type = type;
         this.number = number;
+        this.required = required;
     }
 }
