@@ -3,10 +3,8 @@ package summer.project.controller;
 
 import cn.hutool.core.lang.Assert;
 import cn.hutool.crypto.SecureUtil;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import io.swagger.annotations.*;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +26,7 @@ import summer.project.entity.Questionnaire;
 import summer.project.service.OptionService;
 import summer.project.service.QuestionService;
 import summer.project.service.QuestionnaireService;
+import summer.project.shiro.AccountProfile;
 import summer.project.util.ShiroUtil;
 
 import javax.annotation.Resource;
@@ -64,16 +63,17 @@ public class QuestionnaireController {
     @PostMapping("/save_questionnaire")
     @ApiOperation(value = "保存新建的问卷", notes = "发送用户ID（userId），和一个问题的列表，每个问题包含答案（如果必要），具体看下面的描述，" +
             "如果这个问卷是已经修改过的，那就带着id，如果是新的问卷，id就不用填")
-    public Result saveNewQuestionnaire(@ApiParam(value = "要提交问卷", required = true) @Validated @RequestBody QuestionnaireDto questionnaireDto) {
+    public Result saveQuestionnaire(@ApiParam(value = "要提交问卷", required = true) @Validated @RequestBody QuestionnaireDto questionnaireDto) {
 
         DefaultTransactionDefinition defaultTransactionDefinition = new DefaultTransactionDefinition();
         defaultTransactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
         TransactionStatus status = transactionManager.getTransaction(defaultTransactionDefinition);
+        try {
+            // 新问卷
+            if (questionnaireDto.getId() == null) {
 
-        // 新问卷
-        if (questionnaireDto.getId() == null) {
-            try {
-                Questionnaire questionnaire = new Questionnaire(questionnaireDto.getUserId(),
+                Questionnaire questionnaire = new Questionnaire(
+                        questionnaireDto.getUserId(),
                         questionnaireDto.getTitle(),
                         questionnaireDto.getDescription(),
                         LocalDateTime.now(),
@@ -87,18 +87,17 @@ public class QuestionnaireController {
 
                 for (QuestionDto questionDto : questionnaireDto.getQuestionList()) {
                     Question question = new Question(
-                            questionnaire.getId(),
                             questionDto.getContent(),
                             questionDto.getAnswer(),
                             questionDto.getPoint(),
                             questionDto.getType(),
                             questionDto.getNumber(),
-                            questionDto.getRequired()
+                            questionDto.getRequired(),
+                            questionDto.getComment()
                     );
                     questionService.save(question);
                     for (OptionDto optionDto : questionDto.getOptionList()) {
                         Option option = new Option(
-                                question.getId(),
                                 optionDto.getContent(),
                                 optionDto.getLimit(),
                                 optionDto.getNumber()
@@ -106,18 +105,11 @@ public class QuestionnaireController {
                         optionService.save(option);
                     }
                 }
-                transactionManager.commit(status);
-            } catch (Exception e) {
-
-                transactionManager.rollback(status);
-                return Result.fail("保存失败！");
-            }
-        } else {
-            // 旧问卷
-            Questionnaire questionnaire = questionnaireService.getById(questionnaireDto.getId());
-            Assert.notNull(questionnaire, "不存在该问卷。");
-            Assert.isTrue(questionnaire.getUserId().equals(ShiroUtil.getProfile().getId()),"无权限修改他人问卷。");
-            try {
+            } else {
+                // 旧问卷
+                Questionnaire questionnaire = questionnaireService.getById(questionnaireDto.getId());
+                Assert.notNull(questionnaire, "不存在该问卷。");
+                Assert.isTrue(questionnaire.getUserId().equals(ShiroUtil.getProfile().getId()), "无权限修改他人问卷。");
                 questionnaire.setId(questionnaireDto.getId());
                 questionnaire.setCreateTime(questionnaireDto.getEndTime());
                 questionnaire.setTitle(questionnaireDto.getTitle());
@@ -126,22 +118,84 @@ public class QuestionnaireController {
                 questionnaire.setNeedNum(questionnaireDto.getNeedNum());
                 questionnaire.setLimit(questionnaire.getLimit());
                 questionnaireService.updateById(questionnaire);
-            } catch (Exception e) {
-                transactionManager.rollback(status);
-                return Result.fail("保存失败！");
+
+                for (QuestionDto questionDto : questionnaireDto.getQuestionList()) {
+                    if (questionDto.getId() == null) {
+                        // 新问题
+                        Question question = new Question(
+                                questionDto.getContent(),
+                                questionDto.getAnswer(),
+                                questionDto.getPoint(),
+                                questionDto.getType(),
+                                questionDto.getNumber(),
+                                questionDto.getRequired(),
+                                questionDto.getComment()
+                        );
+                        questionService.save(question);
+                        for (OptionDto optionDto : questionDto.getOptionList()) {
+                            Option option = new Option(
+                                    optionDto.getContent(),
+                                    optionDto.getLimit(),
+                                    optionDto.getNumber()
+                            );
+                            optionService.save(option);
+                        }
+                    } else {
+                        // 旧问题
+                        Question question = questionService.getById(questionDto.getId());
+                        Assert.notNull(question, "题目不存在");
+                        question.setAnswer(questionDto.getAnswer());
+                        question.setComment(question.getComment());
+                        question.setType(question.getType());
+                        question.setContent(question.getContent());
+                        question.setNumber(question.getNumber());
+                        question.setPoint(question.getPoint());
+                        question.setRequired(question.getRequired());
+
+                        questionService.save(question);
+                        for (OptionDto optionDto : questionDto.getOptionList()) {
+
+                            if (optionDto.getId() == null) {
+                                // 新选项
+                                Option option = new Option(
+                                        optionDto.getContent(),
+                                        optionDto.getLimit(),
+                                        optionDto.getNumber()
+                                );
+                                optionService.save(option);
+                            } else {
+                                // 旧选项
+                                Option option = optionService.getById(optionDto.getId());
+                                Assert.notNull(option, "选项不存在");
+                                option.setContent(optionDto.getContent());
+                                option.setLimit(optionDto.getLimit());
+                                option.setNumber(optionDto.getNumber());
+                                optionService.updateById(option);
+                            }
+                        }
+                    }
+
+                }
             }
+            transactionManager.commit(status);
+        } catch (Exception e) {
+
+            transactionManager.rollback(status);
+            return Result.fail("保存失败！");
         }
 
 
         return Result.succeed(200, "问卷保存成功!", null);
     }
 
+
     @RequiresAuthentication
     @PostMapping("/publish_questionnaire")
     @ApiOperation(value = "发布新建的问卷，并返回链接的后缀", notes = "发送用户ID（userId），和一个问题的列表，每个问题包含答案（如果必要），具体看下面的描述，" +
             "如果这个问卷是已经修改过的，那就带着id，如果是新的问卷，id就不用填")
-    public Result submitQuestionnaire(@ApiParam(value = "要提交的问卷", required = true) @Validated @RequestBody QuestionnaireDto questionnaireDto) {
-        Result result = saveNewQuestionnaire(questionnaireDto);
+    public Result submitQuestionnaire
+            (@ApiParam(value = "要提交的问卷", required = true) @Validated @RequestBody QuestionnaireDto questionnaireDto) {
+        Result result = saveQuestionnaire(questionnaireDto);
         if (result.getCode() != 200) {
             return Result.fail("发布失败！");
         }
@@ -168,5 +222,16 @@ public class QuestionnaireController {
         return Result.succeed(md5);
     }
 
+    @RequiresAuthentication
+    @PostMapping("/get_questionnaire_list")
+    @ApiOperation(value = "获得所有的问卷的基本信息", notes = "带着Authorization请求头，不需要参数")
+    @ApiResponses(
+            @ApiResponse(code = 200, message = "你的data长这个样")
+    )
+    public Result getQuestionnaireList() {
+        Long userId = ShiroUtil.getProfile().getId();
+        List<Questionnaire> questionnaireList = questionnaireService.list(new QueryWrapper<Questionnaire>().eq("user_id", userId));
+        return Result.succeed(questionnaireList);
+    }
 
 }

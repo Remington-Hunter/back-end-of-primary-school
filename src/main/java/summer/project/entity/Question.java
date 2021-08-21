@@ -42,6 +42,7 @@ public class Question implements Serializable {
      * 5-评分填空
      * 6-报名多选
      * 7-下拉题
+     * 8-评分题
      */
     private Integer type;
 
@@ -51,9 +52,21 @@ public class Question implements Serializable {
 
     private Long number;
 
+    private String comment;
+
     private Integer required;
 
-    public Question(Long questionnaireId, String content, String answer, Long point, Integer type, Long number, Integer required) {
+    public Question(String content, String answer, Long point, Integer type, Long number, Integer required, String comment) {
+        this.content = content;
+        this.answer = answer;
+        this.point = point;
+        this.type = type;
+        this.number = number;
+        this.required = required;
+        this.comment = comment;
+    }
+
+    public Question(Long questionnaireId, String content, String answer, Long point, Integer type, Long number, Integer required, String comment) {
         this.questionnaire = questionnaireId;
         this.content = content;
         this.answer = answer;
@@ -61,5 +74,6 @@ public class Question implements Serializable {
         this.type = type;
         this.number = number;
         this.required = required;
+        this.comment = comment;
     }
 }

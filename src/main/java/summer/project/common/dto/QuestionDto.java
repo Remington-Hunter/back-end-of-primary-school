@@ -1,5 +1,7 @@
 package summer.project.common.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import summer.project.entity.Option;
@@ -12,6 +14,8 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class QuestionDto implements Serializable {
 
     Long id;
@@ -32,6 +36,10 @@ public class QuestionDto implements Serializable {
     @NotNull(message = "请提供题号")
     private Long number;
 
+    @Builder.Default
     @NotNull(message = "题目是否必填")
-    private Integer required;
+    private Integer required = 0;
+
+    @Builder.Default
+    private String comment = "";
 }
