@@ -39,7 +39,7 @@ import java.util.List;
  * @author JerryZhao
  * @since 2021-08-20
  */
-@Api(tags = "提交问卷等")
+@Api(tags = "问卷相关的接口")
 @RestController
 @RequestMapping("/questionnaire")
 public class QuestionnaireController {
@@ -201,6 +201,7 @@ public class QuestionnaireController {
         questionnaire.setPreparing(0);
         questionnaire.setDeleted(0);
         questionnaire.setUsing(1);
+        questionnaire.setStopping(0);
         String md5 = questionnaire.getId() + "_" + SecureUtil.md5(LocalDateTime.now() + "").substring(0, 4);
         questionnaire.setUrl(md5);
         questionnaireService.updateById(questionnaire);
@@ -230,6 +231,38 @@ public class QuestionnaireController {
         Long userId = ShiroUtil.getProfile().getId();
         List<Questionnaire> questionnaireList = questionnaireService.list(new QueryWrapper<Questionnaire>().eq("user_id", userId));
         return Result.succeed(questionnaireList);
+    }
+
+    @RequiresAuthentication
+    @PostMapping("/throw_to_trashcan")
+    @ApiOperation(value = "将问卷放到回收站", notes = "直接发送问卷的id，发form data")
+    public Result throwToTrash(@ApiParam(value = "要放入回收站的问卷id", required = true) Long id) {
+        Long userId = ShiroUtil.getProfile().getId();
+        Questionnaire questionnaire = questionnaireService.getById(id);
+        Assert.notNull(questionnaire, "问卷不存在");
+        Assert.isTrue(userId.equals(questionnaire.getUserId()), "你无权操作此问卷！");
+        questionnaire.setUsing(0);
+        questionnaire.setDeleted(1);
+        questionnaire.setPreparing(0);
+        questionnaire.setStopping(1);
+        questionnaire.setUrl("");
+        questionnaireService.updateById(questionnaire);
+
+        return Result.succeed("该问卷已放入回收站，之前发布的链接已失效。");
+    }
+
+    @RequiresAuthentication
+    @PostMapping("/delete_questionnaire")
+    @ApiOperation(value = "将回收站的问卷直接删除", notes = "直接发送问卷的id，发form data")
+    public Result deleteQuestionnaire(@ApiParam(value = "要彻底删除的问卷id", required = true) Long id) {
+        Long userId = ShiroUtil.getProfile().getId();
+        Questionnaire questionnaire = questionnaireService.getById(id);
+        Assert.notNull(questionnaire, "问卷不存在");
+        Assert.isTrue(userId.equals(questionnaire.getUserId()), "你无权操作此问卷！");
+        Assert.isTrue(questionnaire.getDeleted().equals(1), "请先将问卷放入回收站。");
+        questionnaireService.removeById(id);
+
+        return Result.succeed("该问卷已删除。");
     }
 
 }
