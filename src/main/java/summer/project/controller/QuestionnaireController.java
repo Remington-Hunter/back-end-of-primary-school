@@ -5,17 +5,17 @@ import cn.hutool.core.lang.Assert;
 import cn.hutool.crypto.SecureUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.swagger.annotations.*;
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import summer.project.common.dto.OptionDto;
 import summer.project.common.dto.QuestionDto;
 import summer.project.common.dto.QuestionnaireDto;
@@ -26,10 +26,8 @@ import summer.project.entity.Questionnaire;
 import summer.project.service.OptionService;
 import summer.project.service.QuestionService;
 import summer.project.service.QuestionnaireService;
-import summer.project.shiro.AccountProfile;
 import summer.project.util.ShiroUtil;
 
-import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -111,7 +109,7 @@ public class QuestionnaireController {
                 Assert.notNull(questionnaire, "不存在该问卷。");
                 Assert.isTrue(questionnaire.getUserId().equals(ShiroUtil.getProfile().getId()), "无权限修改他人问卷。");
                 questionnaire.setId(questionnaireDto.getId());
-                questionnaire.setCreateTime(questionnaireDto.getEndTime());
+                questionnaire.setCreateTime(LocalDateTime.now());
                 questionnaire.setTitle(questionnaireDto.getTitle());
                 questionnaire.setStartTime(questionnaireDto.getStartTime());
                 questionnaire.setEndTime(questionnaireDto.getEndTime());
