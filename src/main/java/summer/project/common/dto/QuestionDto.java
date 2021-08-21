@@ -28,4 +28,7 @@ public class QuestionDto implements Serializable {
     List<OptionDto> optionList;
 
     private String answer;
+
+    @NotNull(message = "请提供题号")
+    private Long number;
 }
