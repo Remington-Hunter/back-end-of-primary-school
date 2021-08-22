@@ -36,7 +36,10 @@ public class Option implements Serializable {
     @TableField("`limit`")
     private Long limit;
 
+    @TableField("`number`")
     private String number;
+
+    private Long answerNum;
 
 
     public Option(Long id, String content, Long limit, String number) {

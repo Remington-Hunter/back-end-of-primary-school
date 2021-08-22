@@ -26,11 +26,13 @@ import summer.project.entity.Questionnaire;
 import summer.project.service.OptionService;
 import summer.project.service.QuestionService;
 import summer.project.service.QuestionnaireService;
+import summer.project.util.CopyUtil;
 import summer.project.util.ShiroUtil;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * <p>
@@ -67,7 +69,7 @@ public class QuestionnaireController {
         DefaultTransactionDefinition defaultTransactionDefinition = new DefaultTransactionDefinition();
         defaultTransactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
         TransactionStatus status = transactionManager.getTransaction(defaultTransactionDefinition);
-        Long id = null;
+        Long id;
         try {
             // 新问卷
             if (questionnaireDto.getId() == null) {
@@ -120,7 +122,13 @@ public class QuestionnaireController {
                 questionnaire.setLimit(questionnaire.getLimit());
                 questionnaireService.updateById(questionnaire);
                 id = questionnaire.getId();
+                List<Question> questionList = questionService.list(new QueryWrapper<Question>().eq("questionnaire", questionnaire.getId()));
                 for (QuestionDto questionDto : questionnaireDto.getQuestionList()) {
+                    questionList.removeIf(question -> question.getId().equals(questionDto.getId()));
+                }
+                questionService.removeByIds(questionList);
+                for (QuestionDto questionDto : questionnaireDto.getQuestionList()) {
+
                     if (questionDto.getId() == null) {
                         // 新问题
                         Question question = new Question(
@@ -154,6 +162,13 @@ public class QuestionnaireController {
                         question.setRequired(question.getRequired());
 
                         questionService.save(question);
+
+                        List<Option> optionList = optionService.list(new QueryWrapper<Option>().eq("question_id", question.getId()));
+                        for (OptionDto optionDto : questionDto.getOptionList()) {
+                            optionList.removeIf(option -> option.getId().equals(optionDto.getId()));
+                        }
+                        optionService.removeByIds(optionList);
+
                         for (OptionDto optionDto : questionDto.getOptionList()) {
 
                             if (optionDto.getId() == null) {
@@ -289,11 +304,38 @@ public class QuestionnaireController {
     @RequiresAuthentication
     @PostMapping("/copy_questionnaire")
     @ApiOperation(value = "复制问卷", notes = "直接发送问卷的id，发form data")
-    public Result CopyQuestionnaire(@ApiParam(value = "要复制的问卷的id", required = true) Long id) {
+    public Result CopyQuestionnaire(@ApiParam(value = "要复制的问卷的id", required = true) Long id) throws Exception{
         Long userId = ShiroUtil.getProfile().getId();
         Questionnaire questionnaire = questionnaireService.getById(id);
         Assert.notNull(questionnaire, "问卷不存在");
         Assert.isTrue(userId.equals(questionnaire.getUserId()), "你无权操作此问卷！");
-        Questionnaire newQuestionnaire = deep
+        DefaultTransactionDefinition defaultTransactionDefinition = new DefaultTransactionDefinition();
+        defaultTransactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        TransactionStatus status = transactionManager.getTransaction(defaultTransactionDefinition);
+        try {
+            Questionnaire newQuestionnaire = (Questionnaire) CopyUtil.deepCopy(questionnaire);
+            newQuestionnaire.setAnswerNum(0L);
+            newQuestionnaire.setPreparing(1);
+            newQuestionnaire.setUsing(0);
+            newQuestionnaire.setDeleted(0);
+            newQuestionnaire.setStopping(0);
+            questionnaireService.save(newQuestionnaire);
+
+            List<Question> questionList = questionService.list(new QueryWrapper<Question>().eq("questionnaire", questionnaire.getId()));
+            questionService.saveBatch(questionList);
+
+            for (Question question : questionList) {
+                List<Option> optionList = optionService.list(new QueryWrapper<Option>().eq("question_id", question.getId()));
+                for (Option option : optionList) {
+                    option.setAnswerNum(0L);
+                }
+                optionService.saveBatch(optionList);
+            }
+            transactionManager.commit(status);
+        } catch (Exception e) {
+            transactionManager.rollback(status);
+        }
+
+        return Result.succeed(201, "复制成功", null);
     }
 }
