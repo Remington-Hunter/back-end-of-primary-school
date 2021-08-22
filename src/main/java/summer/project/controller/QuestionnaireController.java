@@ -2,10 +2,12 @@ package summer.project.controller;
 
 
 import cn.hutool.core.lang.Assert;
+import cn.hutool.core.map.MapBuilder;
 import cn.hutool.crypto.SecureUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.swagger.annotations.*;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.crypto.hash.Hash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -29,10 +31,11 @@ import summer.project.service.QuestionnaireService;
 import summer.project.util.CopyUtil;
 import summer.project.util.ShiroUtil;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.function.Predicate;
+import java.util.Map;
 
 /**
  * <p>
@@ -304,7 +307,7 @@ public class QuestionnaireController {
     @RequiresAuthentication
     @PostMapping("/copy_questionnaire")
     @ApiOperation(value = "复制问卷", notes = "直接发送问卷的id，发form data")
-    public Result CopyQuestionnaire(@ApiParam(value = "要复制的问卷的id", required = true) Long id) throws Exception{
+    public Result CopyQuestionnaire(@ApiParam(value = "要复制的问卷的id", required = true) Long id) {
         Long userId = ShiroUtil.getProfile().getId();
         Questionnaire questionnaire = questionnaireService.getById(id);
         Assert.notNull(questionnaire, "问卷不存在");
@@ -338,4 +341,28 @@ public class QuestionnaireController {
 
         return Result.succeed(201, "复制成功", null);
     }
+
+    @PostMapping("/get_questionnaire")
+    @ApiOperation(value = "得到问卷", notes = "把链接/vj/后面的那一串码抠出来发过来")
+    public Result getQuestionnaire(@ApiParam(value = "xx_xxxxx的码", required = true) String md5) {
+        Questionnaire questionnaire = questionnaireService.getOne(new QueryWrapper<Questionnaire>().eq("url", md5));
+        Assert.notNull(questionnaire, "链接已失效");
+        List<Question> questionList = questionService.list(new QueryWrapper<Question>().eq("questionnaire", questionnaire.getId()));
+
+        List<HashMap<String, Object>> questions = new ArrayList<>();
+        for (Question question : questionList) {
+            HashMap<String, Object> qMap = new HashMap<>();
+            qMap.put("question", question);
+            qMap.put("optionList", optionService.list(new QueryWrapper<Option>().eq("question_id", question.getId())));
+            questions.add(qMap);
+        }
+
+
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("questionnaire", questionnaire);
+        result.put("questionList", questions);
+
+        return Result.succeed(result);
+    }
+
 }
