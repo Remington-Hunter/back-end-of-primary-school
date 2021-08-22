@@ -213,29 +213,42 @@ public class QuestionnaireController {
 
 
     @RequiresAuthentication
-    @PostMapping("/publish_questionnaire")
-    @ApiOperation(value = "发布新建的问卷，并返回链接的后缀", notes = "发送用户ID（userId），和一个问题的列表，每个问题包含答案（如果必要），具体看下面的描述，" +
-            "如果这个问卷是已经修改过的，那就带着id，如果是新的问卷，id就不用填")
-    public Result submitQuestionnaire
-            (@ApiParam(value = "要提交的问卷", required = true) @Validated @RequestBody QuestionnaireDto questionnaireDto) {
-        Result result = saveQuestionnaire(questionnaireDto);
-        if (result.getCode() != 200) {
-            return Result.fail("发布失败！");
-        }
-        Questionnaire questionnaire = questionnaireService.getById((Long) result.getData());
-        questionnaire.setPreparing(0);
-        questionnaire.setDeleted(0);
-        questionnaire.setUsing(1);
-        questionnaire.setStopping(0);
+    @PostMapping("/throw_questionnaire")
+    @ApiOperation(value = "投放问卷，form data传参数 questionnaireId:问卷ID")
+    public Result throwQuestionnaire(@ApiParam(value = "要投放的问卷id", required = true) Long questionnaireId) {
+        Questionnaire questionnaire = questionnaireService.getById(questionnaireId);
+        Assert.notNull(questionnaire, "问卷不存在");
+        Assert.isTrue(ShiroUtil.getProfile().getId().equals(questionnaire.getUserId()), "您无权操作此问卷！");
         String md5 = questionnaire.getId() + "_" + SecureUtil.md5(LocalDateTime.now() + "").substring(0, 4);
+        questionnaire.setPreparing(1);
+        questionnaire.setStopping(0);
+        questionnaire.setDeleted(0);
+        questionnaire.setUsing(0);
         questionnaire.setUrl(md5);
         questionnaireService.updateById(questionnaire);
         return Result.succeed(200, "问卷发布成功!", md5);
     }
 
+
+    @RequiresAuthentication
+    @PostMapping("/publish_questionnaire")
+    @ApiOperation(value = "发布问卷，form data传参数 questionnaireId:问卷ID")
+    public Result submitQuestionnaire(@ApiParam(value = "要发布的问卷id", required = true) Long questionnaireId) {
+        Questionnaire questionnaire = questionnaireService.getById(questionnaireId);
+        Assert.notNull(questionnaire, "问卷不存在");
+        Assert.isTrue(ShiroUtil.getProfile().getId().equals(questionnaire.getUserId()), "您无权操作此问卷！");
+        questionnaire.setPreparing(0);
+        questionnaire.setDeleted(0);
+        questionnaire.setUsing(1);
+        questionnaire.setStopping(0);
+
+        questionnaireService.updateById(questionnaire);
+        return Result.succeed(200, "问卷发布成功!", null);
+    }
+
     @RequiresAuthentication
     @PostMapping("/get_link")
-    @ApiOperation(value = "获得问卷的链接后缀", notes = "直接发送问卷的id，发form data")
+    @ApiOperation(value = "获得问卷的链接后缀，相当于投放问卷", notes = "直接发送问卷的id，发form data")
     public Result getLink(@ApiParam(value = "要得到链接的问卷id", required = true) Long id) {
         Questionnaire questionnaire = questionnaireService.getById(id);
         Assert.notNull(questionnaire, "不存在该问卷");
