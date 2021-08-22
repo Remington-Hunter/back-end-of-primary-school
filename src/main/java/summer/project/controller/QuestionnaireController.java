@@ -92,6 +92,7 @@ public class QuestionnaireController {
 
                 for (QuestionDto questionDto : questionnaireDto.getQuestionList()) {
                     Question question = new Question(
+                            questionnaire.getId(),
                             questionDto.getContent(),
                             questionDto.getAnswer(),
                             questionDto.getPoint(),
@@ -103,6 +104,7 @@ public class QuestionnaireController {
                     questionService.save(question);
                     for (OptionDto optionDto : questionDto.getOptionList()) {
                         Option option = new Option(
+                                question.getId(),
                                 optionDto.getContent(),
                                 optionDto.getLimit(),
                                 optionDto.getNumber()
