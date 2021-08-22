@@ -74,8 +74,26 @@ public class AnswerController {
 
         for (Question question : questionList) {
             HashMap<String, Object> q = new HashMap<>();
-            List<Option> optionList = optionService.list(new QueryWrapper<Option>().eq("question_id", question.getId()));
-            q.put("optionList", optionList);
+
+            switch (question.getType()) {
+                case 0:
+                case 1:
+                case 3:
+                case 4:
+                case 6:
+                case 7:
+                case 8:
+                    List<Answer> answerList = answerService.list(new QueryWrapper<Answer>().eq("question_id", question.getId()));
+                    q.put("answerList", answerList);
+                    break;
+                default:
+                    List<Option> optionList = optionService.list(new QueryWrapper<Option>().eq("question_id", question.getId()));
+                    q.put("optionList", optionList);
+                    break;
+
+            }
+
+
             q.put("question", question);
             r.add(q);
         }
@@ -122,10 +140,32 @@ public class AnswerController {
                 answer.setQuestionId(answerDto.getQuestionId());
 
                 List<Option> optionList = optionService.list(new QueryWrapper<Option>().eq("question_id", question.getId()));
-                for (Option option : optionList) {
-                    if (option.getNumber().equals(answerDto.getNumber()) && option.getLimit() <= option.getAnswerNum()) {
-                        return Result.fail(400, "抱歉，您的第"+answerDto.getQuestionId()+"题的选择人数已满。", null);
-                    }
+
+
+                switch (question.getType()) {
+                    case 6:
+                        for (Option option : optionList) {
+                            if (option.getNumber().equals(answerDto.getNumber()) && option.getLimit() <= option.getAnswerNum()) {
+                                return Result.fail(400, "抱歉，您的第"+answerDto.getQuestionId()+"题的选择人数已满。", null);
+                            }
+                        }
+                    case 0:
+                    case 1:
+                    case 3:
+                    case 4:
+                    case 7:
+                    case 8:
+                        for (Character ch : answerDto.getNumber().toCharArray()) {
+                            for (Option option : optionList) {
+                                if (option.getNumber().charAt(0) == ch) {
+                                    option.setAnswerNum(option.getAnswerNum()+1);
+                                    optionService.updateById(option);
+                                }
+                            }
+                        }
+                        break;
+
+
                 }
 
                 answerService.save(answer);
