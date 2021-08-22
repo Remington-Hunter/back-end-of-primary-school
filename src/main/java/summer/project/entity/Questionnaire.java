@@ -63,6 +63,9 @@ public class Questionnaire implements Serializable {
 
     private Long needNum;
 
+    @TableField("`type`")
+    private Integer type;
+
 
     public Questionnaire(Long userId,
                          String title,
@@ -71,7 +74,8 @@ public class Questionnaire implements Serializable {
                          LocalDateTime startTime,
                          LocalDateTime endTime,
                          Long needNum,
-                         Long limit) {
+                         Long limit,
+                         Integer type) {
         this.userId = userId;
         this.title = title;
         this.description = description;
@@ -80,5 +84,6 @@ public class Questionnaire implements Serializable {
         this.endTime = endTime;
         this.needNum = needNum;
         this.limit = limit;
+        this.type = type;
     }
 }
