@@ -2,10 +2,12 @@ package summer.project.controller;
 
 
 import cn.hutool.core.lang.Assert;
+import cn.hutool.core.map.MapBuilder;
 import cn.hutool.crypto.SecureUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.swagger.annotations.*;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.crypto.hash.Hash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -26,10 +28,14 @@ import summer.project.entity.Questionnaire;
 import summer.project.service.OptionService;
 import summer.project.service.QuestionService;
 import summer.project.service.QuestionnaireService;
+import summer.project.util.CopyUtil;
 import summer.project.util.ShiroUtil;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -66,6 +72,7 @@ public class QuestionnaireController {
         DefaultTransactionDefinition defaultTransactionDefinition = new DefaultTransactionDefinition();
         defaultTransactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
         TransactionStatus status = transactionManager.getTransaction(defaultTransactionDefinition);
+        Long id;
         try {
             // 新问卷
             if (questionnaireDto.getId() == null) {
@@ -103,6 +110,7 @@ public class QuestionnaireController {
                         optionService.save(option);
                     }
                 }
+                id = questionnaire.getId();
             } else {
                 // 旧问卷
                 Questionnaire questionnaire = questionnaireService.getById(questionnaireDto.getId());
@@ -116,8 +124,14 @@ public class QuestionnaireController {
                 questionnaire.setNeedNum(questionnaireDto.getNeedNum());
                 questionnaire.setLimit(questionnaire.getLimit());
                 questionnaireService.updateById(questionnaire);
-
+                id = questionnaire.getId();
+                List<Question> questionList = questionService.list(new QueryWrapper<Question>().eq("questionnaire", questionnaire.getId()));
                 for (QuestionDto questionDto : questionnaireDto.getQuestionList()) {
+                    questionList.removeIf(question -> question.getId().equals(questionDto.getId()));
+                }
+                questionService.removeByIds(questionList);
+                for (QuestionDto questionDto : questionnaireDto.getQuestionList()) {
+
                     if (questionDto.getId() == null) {
                         // 新问题
                         Question question = new Question(
@@ -151,6 +165,13 @@ public class QuestionnaireController {
                         question.setRequired(question.getRequired());
 
                         questionService.save(question);
+
+                        List<Option> optionList = optionService.list(new QueryWrapper<Option>().eq("question_id", question.getId()));
+                        for (OptionDto optionDto : questionDto.getOptionList()) {
+                            optionList.removeIf(option -> option.getId().equals(optionDto.getId()));
+                        }
+                        optionService.removeByIds(optionList);
+
                         for (OptionDto optionDto : questionDto.getOptionList()) {
 
                             if (optionDto.getId() == null) {
@@ -183,7 +204,7 @@ public class QuestionnaireController {
         }
 
 
-        return Result.succeed(200, "问卷保存成功!", null);
+        return Result.succeed(200, "问卷保存成功!", id);
     }
 
 
@@ -197,7 +218,7 @@ public class QuestionnaireController {
         if (result.getCode() != 200) {
             return Result.fail("发布失败！");
         }
-        Questionnaire questionnaire = questionnaireService.getById(questionnaireDto.getId());
+        Questionnaire questionnaire = questionnaireService.getById((Long) result.getData());
         questionnaire.setPreparing(0);
         questionnaire.setDeleted(0);
         questionnaire.setUsing(1);
@@ -244,7 +265,7 @@ public class QuestionnaireController {
         questionnaire.setUsing(0);
         questionnaire.setDeleted(1);
         questionnaire.setPreparing(0);
-        questionnaire.setStopping(1);
+        questionnaire.setStopping(0);
         questionnaire.setUrl("");
         questionnaireService.updateById(questionnaire);
 
@@ -263,6 +284,85 @@ public class QuestionnaireController {
         questionnaireService.removeById(id);
 
         return Result.succeed("该问卷已删除。");
+    }
+
+    @RequiresAuthentication
+    @PostMapping("/take_out from_trashcan")
+    @ApiOperation(value = "将回收站的问卷取出来恢复", notes = "直接发送问卷的id，发form data")
+    public Result takeOutFromTrashcan(@ApiParam(value = "要彻底删除的问卷id", required = true) Long id) {
+        Long userId = ShiroUtil.getProfile().getId();
+        Questionnaire questionnaire = questionnaireService.getById(id);
+        Assert.notNull(questionnaire, "问卷不存在");
+        Assert.isTrue(userId.equals(questionnaire.getUserId()), "你无权操作此问卷！");
+        Assert.isTrue(questionnaire.getDeleted().equals(1), "请先将问卷放入回收站。");
+        questionnaire.setPreparing(0);
+        questionnaire.setStopping(1);
+        questionnaire.setDeleted(0);
+        questionnaire.setUsing(0);
+        questionnaireService.updateById(questionnaire);
+
+        return Result.succeed("该问卷已删除。");
+    }
+
+    @RequiresAuthentication
+    @PostMapping("/copy_questionnaire")
+    @ApiOperation(value = "复制问卷", notes = "直接发送问卷的id，发form data")
+    public Result CopyQuestionnaire(@ApiParam(value = "要复制的问卷的id", required = true) Long id) {
+        Long userId = ShiroUtil.getProfile().getId();
+        Questionnaire questionnaire = questionnaireService.getById(id);
+        Assert.notNull(questionnaire, "问卷不存在");
+        Assert.isTrue(userId.equals(questionnaire.getUserId()), "你无权操作此问卷！");
+        DefaultTransactionDefinition defaultTransactionDefinition = new DefaultTransactionDefinition();
+        defaultTransactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        TransactionStatus status = transactionManager.getTransaction(defaultTransactionDefinition);
+        try {
+            Questionnaire newQuestionnaire = (Questionnaire) CopyUtil.deepCopy(questionnaire);
+            newQuestionnaire.setAnswerNum(0L);
+            newQuestionnaire.setPreparing(1);
+            newQuestionnaire.setUsing(0);
+            newQuestionnaire.setDeleted(0);
+            newQuestionnaire.setStopping(0);
+            questionnaireService.save(newQuestionnaire);
+
+            List<Question> questionList = questionService.list(new QueryWrapper<Question>().eq("questionnaire", questionnaire.getId()));
+            questionService.saveBatch(questionList);
+
+            for (Question question : questionList) {
+                List<Option> optionList = optionService.list(new QueryWrapper<Option>().eq("question_id", question.getId()));
+                for (Option option : optionList) {
+                    option.setAnswerNum(0L);
+                }
+                optionService.saveBatch(optionList);
+            }
+            transactionManager.commit(status);
+        } catch (Exception e) {
+            transactionManager.rollback(status);
+        }
+
+        return Result.succeed(201, "复制成功", null);
+    }
+
+    @PostMapping("/get_questionnaire")
+    @ApiOperation(value = "得到问卷", notes = "把链接/vj/后面的那一串码抠出来发过来")
+    public Result getQuestionnaire(@ApiParam(value = "xx_xxxxx的码", required = true) String md5) {
+        Questionnaire questionnaire = questionnaireService.getOne(new QueryWrapper<Questionnaire>().eq("url", md5));
+        Assert.notNull(questionnaire, "链接已失效");
+        List<Question> questionList = questionService.list(new QueryWrapper<Question>().eq("questionnaire", questionnaire.getId()));
+
+        List<HashMap<String, Object>> questions = new ArrayList<>();
+        for (Question question : questionList) {
+            HashMap<String, Object> qMap = new HashMap<>();
+            qMap.put("question", question);
+            qMap.put("optionList", optionService.list(new QueryWrapper<Option>().eq("question_id", question.getId())));
+            questions.add(qMap);
+        }
+
+
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("questionnaire", questionnaire);
+        result.put("questionList", questions);
+
+        return Result.succeed(result);
     }
 
 }
