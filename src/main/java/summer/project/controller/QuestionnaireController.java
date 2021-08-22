@@ -265,4 +265,22 @@ public class QuestionnaireController {
         return Result.succeed("该问卷已删除。");
     }
 
+    @RequiresAuthentication
+    @PostMapping("/take_out from_trashcan")
+    @ApiOperation(value = "将回收站的问卷取出来恢复", notes = "直接发送问卷的id，发form data")
+    public Result takeOutFromTrashcan(@ApiParam(value = "要彻底删除的问卷id", required = true) Long id) {
+        Long userId = ShiroUtil.getProfile().getId();
+        Questionnaire questionnaire = questionnaireService.getById(id);
+        Assert.notNull(questionnaire, "问卷不存在");
+        Assert.isTrue(userId.equals(questionnaire.getUserId()), "你无权操作此问卷！");
+        Assert.isTrue(questionnaire.getDeleted().equals(1), "请先将问卷放入回收站。");
+        questionnaire.setPreparing(0);
+        questionnaire.setStopping(1);
+        questionnaire.setDeleted(0);
+        questionnaire.setUsing(0);
+        questionnaireService.updateById(questionnaire);
+
+        return Result.succeed("该问卷已删除。");
+    }
+
 }
