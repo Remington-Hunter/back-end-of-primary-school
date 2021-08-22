@@ -287,7 +287,7 @@ public class QuestionnaireController {
     }
 
     @RequiresAuthentication
-    @PostMapping("/take_out from_trashcan")
+    @PostMapping("/take_out_from_trashcan")
     @ApiOperation(value = "将回收站的问卷取出来恢复", notes = "直接发送问卷的id，发form data")
     public Result takeOutFromTrashcan(@ApiParam(value = "要彻底删除的问卷id", required = true) Long id) {
         Long userId = ShiroUtil.getProfile().getId();
