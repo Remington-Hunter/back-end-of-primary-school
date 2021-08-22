@@ -28,6 +28,7 @@ import summer.project.service.QuestionService;
 import summer.project.service.QuestionnaireService;
 import summer.project.util.ShiroUtil;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -66,6 +67,7 @@ public class QuestionnaireController {
         DefaultTransactionDefinition defaultTransactionDefinition = new DefaultTransactionDefinition();
         defaultTransactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
         TransactionStatus status = transactionManager.getTransaction(defaultTransactionDefinition);
+        Long id = null;
         try {
             // 新问卷
             if (questionnaireDto.getId() == null) {
@@ -103,6 +105,7 @@ public class QuestionnaireController {
                         optionService.save(option);
                     }
                 }
+                id = questionnaire.getId();
             } else {
                 // 旧问卷
                 Questionnaire questionnaire = questionnaireService.getById(questionnaireDto.getId());
@@ -116,7 +119,7 @@ public class QuestionnaireController {
                 questionnaire.setNeedNum(questionnaireDto.getNeedNum());
                 questionnaire.setLimit(questionnaire.getLimit());
                 questionnaireService.updateById(questionnaire);
-
+                id = questionnaire.getId();
                 for (QuestionDto questionDto : questionnaireDto.getQuestionList()) {
                     if (questionDto.getId() == null) {
                         // 新问题
@@ -183,7 +186,7 @@ public class QuestionnaireController {
         }
 
 
-        return Result.succeed(200, "问卷保存成功!", null);
+        return Result.succeed(200, "问卷保存成功!", id);
     }
 
 
@@ -197,7 +200,7 @@ public class QuestionnaireController {
         if (result.getCode() != 200) {
             return Result.fail("发布失败！");
         }
-        Questionnaire questionnaire = questionnaireService.getById(questionnaireDto.getId());
+        Questionnaire questionnaire = questionnaireService.getById((Long) result.getData());
         questionnaire.setPreparing(0);
         questionnaire.setDeleted(0);
         questionnaire.setUsing(1);
@@ -244,7 +247,7 @@ public class QuestionnaireController {
         questionnaire.setUsing(0);
         questionnaire.setDeleted(1);
         questionnaire.setPreparing(0);
-        questionnaire.setStopping(1);
+        questionnaire.setStopping(0);
         questionnaire.setUrl("");
         questionnaireService.updateById(questionnaire);
 
@@ -283,4 +286,14 @@ public class QuestionnaireController {
         return Result.succeed("该问卷已删除。");
     }
 
+    @RequiresAuthentication
+    @PostMapping("/copy_questionnaire")
+    @ApiOperation(value = "复制问卷", notes = "直接发送问卷的id，发form data")
+    public Result CopyQuestionnaire(@ApiParam(value = "要复制的问卷的id", required = true) Long id) {
+        Long userId = ShiroUtil.getProfile().getId();
+        Questionnaire questionnaire = questionnaireService.getById(id);
+        Assert.notNull(questionnaire, "问卷不存在");
+        Assert.isTrue(userId.equals(questionnaire.getUserId()), "你无权操作此问卷！");
+        Questionnaire newQuestionnaire = deep
+    }
 }
