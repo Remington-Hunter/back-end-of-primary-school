@@ -86,7 +86,8 @@ public class QuestionnaireController {
                         questionnaireDto.getStartTime(),
                         questionnaireDto.getEndTime(),
                         questionnaireDto.getNeedNum(),
-                        questionnaireDto.getLimit()
+                        questionnaireDto.getLimit(),
+                        questionnaireDto.getType()
                 );
 
                 questionnaireService.save(questionnaire);

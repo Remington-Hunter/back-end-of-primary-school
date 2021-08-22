@@ -34,4 +34,7 @@ public class QuestionnaireDto {
     private Long needNum;
 
     List<QuestionDto> questionList;
+
+    @NotNull(message = "问卷类型不能为空")
+    private Integer type;
 }
