@@ -30,6 +30,8 @@ import summer.project.service.QuestionService;
 import summer.project.service.QuestionnaireService;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -65,6 +67,21 @@ public class AnswerController {
     public Result getResult(@ApiParam(value = "问卷id", required = true) Long id) {
         Questionnaire questionnaire = questionnaireService.getById(id);
         Assert.notNull(questionnaire, "不存在该问卷");
+
+        List<Question> questionList = questionService.list(new QueryWrapper<Question>().eq("questionnaire", id));
+
+        List<HashMap<String, Object>> r = new ArrayList<>();
+
+        for (Question question : questionList) {
+            HashMap<String, Object> q = new HashMap<>();
+            List<Option> optionList = optionService.list(new QueryWrapper<Option>().eq("question_id", question.getId()));
+            q.put("optionList", optionList);
+            q.put("question", question);
+            r.add(q);
+        }
+
+        return Result.succeed(200, "查看成功", r);
+
     }
 
 
@@ -83,7 +100,7 @@ public class AnswerController {
             Assert.notNull(questionnaire, "不存在该问卷");
 
             LocalDateTime now = LocalDateTime.now();
-            if (questionnaire.getEndTime() != null && now.isAfter(questionnaire.getEndTime())) {
+            if (questionnaire.getEndTime() != null && now.isAfter(questionnaire.getEndTime().plusSeconds(5L))) {
                 return Result.fail(400, "问卷提交已截止。", null);
             }
             if (questionnaire.getStartTime() != null && now.isBefore(questionnaire.getStartTime())) {
