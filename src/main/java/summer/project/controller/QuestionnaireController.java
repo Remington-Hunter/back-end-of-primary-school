@@ -327,11 +327,13 @@ public class QuestionnaireController {
             questionnaireService.save(newQuestionnaire);
 
             List<Question> questionList = questionService.list(new QueryWrapper<Question>().eq("questionnaire", questionnaire.getId()));
-            questionService.saveBatch(questionList);
 
             for (Question question : questionList) {
                 List<Option> optionList = optionService.list(new QueryWrapper<Option>().eq("question_id", question.getId()));
+                question.setQuestionnaire(newQuestionnaire.getId());
+                questionService.save(question);
                 for (Option option : optionList) {
+                    option.setQuestionId(question.getId());
                     option.setAnswerNum(0L);
                 }
                 optionService.saveBatch(optionList);
