@@ -3,8 +3,8 @@ spring:
     store-type: redis
   datasource:
     username: root
-    password: Zcd_13325015108
-#    password: 123456
+#    password: Zcd_13325015108
+    password: 123456
     url: jdbc:mysql://localhost:3306/summer2021?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
@@ -60,8 +60,8 @@ server:
 #spring.redis.pool.max-active=8
 #spring.redis.pool.max-wait=-1
 storage:
-#  pathname: /home/ubuntu/Project/summer2021/sestore/
-  pathname: /Users/jerryzhao/Desktop/sestore
+  pathname: /home/ubuntu/Project/summer2021/sestore/
+#  pathname: /Users/jerryzhao/Desktop/sestore
 mconfig:
   swagger-ui-open: true
 
