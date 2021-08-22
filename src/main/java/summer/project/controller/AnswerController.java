@@ -42,7 +42,7 @@ import java.util.List;
  * @author JerryZhao
  * @since 2021-08-20
  */
-@Api("提交答卷")
+@Api(tags = {"提交答卷"})
 @RestController
 @RequestMapping("/answer")
 public class AnswerController {
