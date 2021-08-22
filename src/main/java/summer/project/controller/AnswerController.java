@@ -2,6 +2,7 @@ package summer.project.controller;
 
 
 import cn.hutool.core.lang.Assert;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -20,15 +21,22 @@ import summer.project.common.dto.AnswerDto;
 import summer.project.common.dto.AnswerListDto;
 import summer.project.common.lang.Result;
 import summer.project.entity.Answer;
+import summer.project.entity.Option;
 import summer.project.entity.Question;
 import summer.project.entity.Questionnaire;
 import summer.project.service.AnswerService;
+import summer.project.service.OptionService;
 import summer.project.service.QuestionService;
 import summer.project.service.QuestionnaireService;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author JerryZhao
@@ -49,7 +57,50 @@ public class AnswerController {
     AnswerService answerService;
 
     @Autowired
+    OptionService optionService;
+
+    @Autowired
     PlatformTransactionManager transactionManager;
+
+    @ApiOperation(value = "查看统计结果", notes = "直接发formdata的问卷id，名字就叫id")
+    @PostMapping("get_result")
+    public Result getResult(@ApiParam(value = "问卷id", required = true) Long id) {
+        Questionnaire questionnaire = questionnaireService.getById(id);
+        Assert.notNull(questionnaire, "不存在该问卷");
+
+        List<Question> questionList = questionService.list(new QueryWrapper<Question>().eq("questionnaire", id));
+
+        List<HashMap<String, Object>> r = new ArrayList<>();
+
+        for (Question question : questionList) {
+            HashMap<String, Object> q = new HashMap<>();
+
+            switch (question.getType()) {
+                case 0:
+                case 1:
+                case 3:
+                case 4:
+                case 6:
+                case 7:
+                case 8:
+                    List<Answer> answerList = answerService.list(new QueryWrapper<Answer>().eq("question_id", question.getId()));
+                    q.put("answerList", answerList);
+                    break;
+                default:
+                    List<Option> optionList = optionService.list(new QueryWrapper<Option>().eq("question_id", question.getId()));
+                    q.put("optionList", optionList);
+                    break;
+
+            }
+
+
+            q.put("question", question);
+            r.add(q);
+        }
+
+        return Result.succeed(200, "查看成功", r);
+
+    }
 
 
     @ApiOperation(value = "提交答案", notes = "json格式")
@@ -61,9 +112,23 @@ public class AnswerController {
         defaultTransactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
         TransactionStatus status = transactionManager.getTransaction(defaultTransactionDefinition);
 
+
         try {
             Questionnaire questionnaire = questionnaireService.getById(questionnaireId);
             Assert.notNull(questionnaire, "不存在该问卷");
+
+            LocalDateTime now = LocalDateTime.now();
+            if (questionnaire.getEndTime() != null && now.isAfter(questionnaire.getEndTime().plusSeconds(5L))) {
+                return Result.fail(400, "问卷提交已截止。", null);
+            }
+            if (questionnaire.getStartTime() != null && now.isBefore(questionnaire.getStartTime())) {
+                return Result.fail(400, "问卷未开始。", null);
+            }
+
+            if (questionnaire.getLimit() >= 0 && questionnaire.getLimit() < questionnaire.getAnswerNum()) {
+                return Result.fail(400, "问卷填报人数已满。", null);
+            }
+
 
             for (AnswerDto answerDto : answerListDto.getAnswerDtoList()) {
                 Long questionId = answerDto.getQuestionId();
@@ -73,6 +138,35 @@ public class AnswerController {
                 answer.setContent(answerDto.getContent());
                 answer.setNumber(answerDto.getNumber());
                 answer.setQuestionId(answerDto.getQuestionId());
+
+                List<Option> optionList = optionService.list(new QueryWrapper<Option>().eq("question_id", question.getId()));
+
+
+                switch (question.getType()) {
+                    case 6:
+                        for (Option option : optionList) {
+                            if (option.getNumber().equals(answerDto.getNumber()) && option.getLimit() <= option.getAnswerNum()) {
+                                return Result.fail(400, "抱歉，您的第"+answerDto.getQuestionId()+"题的选择人数已满。", null);
+                            }
+                        }
+                    case 0:
+                    case 1:
+                    case 3:
+                    case 4:
+                    case 7:
+                    case 8:
+                        for (Character ch : answerDto.getNumber().toCharArray()) {
+                            for (Option option : optionList) {
+                                if (option.getNumber().charAt(0) == ch) {
+                                    option.setAnswerNum(option.getAnswerNum()+1);
+                                    optionService.updateById(option);
+                                }
+                            }
+                        }
+                        break;
+
+
+                }
 
                 answerService.save(answer);
             }
