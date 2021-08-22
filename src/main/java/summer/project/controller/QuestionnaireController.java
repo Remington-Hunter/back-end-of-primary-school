@@ -65,7 +65,7 @@ public class QuestionnaireController {
     //    @Transactional
     @RequiresAuthentication
     @PostMapping("/save_questionnaire")
-    @ApiOperation(value = "保存新建的问卷", notes = "发送用户ID（userId），和一个问题的列表，每个问题包含答案（如果必要），具体看下面的描述，" +
+    @ApiOperation(value = "保存问卷", notes = "发送用户ID（userId），和一个问题的列表，每个问题包含答案（如果必要），具体看下面的描述，" +
             "如果这个问卷是已经修改过的，那就带着id，如果是新的问卷，id就不用填")
     public Result saveQuestionnaire(@ApiParam(value = "要提交问卷", required = true) @Validated @RequestBody QuestionnaireDto questionnaireDto) {
 
@@ -75,9 +75,10 @@ public class QuestionnaireController {
         Long id;
         try {
             // 新问卷
+            Questionnaire questionnaire;
             if (questionnaireDto.getId() == null) {
 
-                Questionnaire questionnaire = new Questionnaire(
+                questionnaire = new Questionnaire(
                         questionnaireDto.getUserId(),
                         questionnaireDto.getTitle(),
                         questionnaireDto.getDescription(),
@@ -90,32 +91,10 @@ public class QuestionnaireController {
 
                 questionnaireService.save(questionnaire);
 
-                for (QuestionDto questionDto : questionnaireDto.getQuestionList()) {
-                    Question question = new Question(
-                            questionnaire.getId(),
-                            questionDto.getContent(),
-                            questionDto.getAnswer(),
-                            questionDto.getPoint(),
-                            questionDto.getType(),
-                            questionDto.getNumber(),
-                            questionDto.getRequired(),
-                            questionDto.getComment()
-                    );
-                    questionService.save(question);
-                    for (OptionDto optionDto : questionDto.getOptionList()) {
-                        Option option = new Option(
-                                question.getId(),
-                                optionDto.getContent(),
-                                optionDto.getLimit(),
-                                optionDto.getNumber()
-                        );
-                        optionService.save(option);
-                    }
-                }
-                id = questionnaire.getId();
+
             } else {
                 // 旧问卷
-                Questionnaire questionnaire = questionnaireService.getById(questionnaireDto.getId());
+                questionnaire = questionnaireService.getById(questionnaireDto.getId());
                 Assert.notNull(questionnaire, "不存在该问卷。");
                 Assert.isTrue(questionnaire.getUserId().equals(ShiroUtil.getProfile().getId()), "无权限修改他人问卷。");
                 questionnaire.setId(questionnaireDto.getId());
@@ -126,78 +105,101 @@ public class QuestionnaireController {
                 questionnaire.setNeedNum(questionnaireDto.getNeedNum());
                 questionnaire.setLimit(questionnaire.getLimit());
                 questionnaireService.updateById(questionnaire);
-                id = questionnaire.getId();
-                List<Question> questionList = questionService.list(new QueryWrapper<Question>().eq("questionnaire", questionnaire.getId()));
-                for (QuestionDto questionDto : questionnaireDto.getQuestionList()) {
-                    questionList.removeIf(question -> question.getId().equals(questionDto.getId()));
-                }
-                questionService.removeByIds(questionList);
-                for (QuestionDto questionDto : questionnaireDto.getQuestionList()) {
-
-                    if (questionDto.getId() == null) {
-                        // 新问题
-                        Question question = new Question(
-                                questionDto.getContent(),
-                                questionDto.getAnswer(),
-                                questionDto.getPoint(),
-                                questionDto.getType(),
-                                questionDto.getNumber(),
-                                questionDto.getRequired(),
-                                questionDto.getComment()
-                        );
-                        questionService.save(question);
-                        for (OptionDto optionDto : questionDto.getOptionList()) {
-                            Option option = new Option(
-                                    optionDto.getContent(),
-                                    optionDto.getLimit(),
-                                    optionDto.getNumber()
-                            );
-                            optionService.save(option);
-                        }
-                    } else {
-                        // 旧问题
-                        Question question = questionService.getById(questionDto.getId());
-                        Assert.notNull(question, "题目不存在");
-                        question.setAnswer(questionDto.getAnswer());
-                        question.setComment(question.getComment());
-                        question.setType(question.getType());
-                        question.setContent(question.getContent());
-                        question.setNumber(question.getNumber());
-                        question.setPoint(question.getPoint());
-                        question.setRequired(question.getRequired());
-
-                        questionService.save(question);
-
-                        List<Option> optionList = optionService.list(new QueryWrapper<Option>().eq("question_id", question.getId()));
-                        for (OptionDto optionDto : questionDto.getOptionList()) {
-                            optionList.removeIf(option -> option.getId().equals(optionDto.getId()));
-                        }
-                        optionService.removeByIds(optionList);
-
-                        for (OptionDto optionDto : questionDto.getOptionList()) {
-
-                            if (optionDto.getId() == null) {
-                                // 新选项
-                                Option option = new Option(
-                                        optionDto.getContent(),
-                                        optionDto.getLimit(),
-                                        optionDto.getNumber()
-                                );
-                                optionService.save(option);
-                            } else {
-                                // 旧选项
-                                Option option = optionService.getById(optionDto.getId());
-                                Assert.notNull(option, "选项不存在");
-                                option.setContent(optionDto.getContent());
-                                option.setLimit(optionDto.getLimit());
-                                option.setNumber(optionDto.getNumber());
-                                optionService.updateById(option);
-                            }
-                        }
-                    }
-
+//                List<Question> questionList = questionService.list(new QueryWrapper<Question>().eq("questionnaire", questionnaire.getId()));
+                questionService.remove(new QueryWrapper<Question>().eq("questionnaire", questionnaire.getId()));
+            }
+            for (QuestionDto questionDto : questionnaireDto.getQuestionList()) {
+                Question question = new Question(
+                        questionnaire.getId(),
+                        questionDto.getContent(),
+                        questionDto.getAnswer(),
+                        questionDto.getPoint(),
+                        questionDto.getType(),
+                        questionDto.getNumber(),
+                        questionDto.getRequired(),
+                        questionDto.getComment()
+                );
+                questionService.save(question);
+                for (OptionDto optionDto : questionDto.getOptionList()) {
+                    Option option = new Option(
+                            question.getId(),
+                            optionDto.getContent(),
+                            optionDto.getLimit(),
+                            optionDto.getNumber()
+                    );
+                    optionService.save(option);
                 }
             }
+            //                for (QuestionDto questionDto : questionnaireDto.getQuestionList()) {
+//                    questionList.removeIf(question -> question.getId().equals(questionDto.getId()));
+//                }
+//                questionService.removeByIds(questionList);
+//                for (QuestionDto questionDto : questionnaireDto.getQuestionList()) {
+//
+//                    if (questionDto.getId() == null) {
+//                        // 新问题
+//                        Question question = new Question(
+//                                questionDto.getContent(),
+//                                questionDto.getAnswer(),
+//                                questionDto.getPoint(),
+//                                questionDto.getType(),
+//                                questionDto.getNumber(),
+//                                questionDto.getRequired(),
+//                                questionDto.getComment()
+//                        );
+//                        questionService.save(question);
+//                        for (OptionDto optionDto : questionDto.getOptionList()) {
+//                            Option option = new Option(
+//                                    optionDto.getContent(),
+//                                    optionDto.getLimit(),
+//                                    optionDto.getNumber()
+//                            );
+//                            optionService.save(option);
+//                        }
+//                    } else {
+//                        // 旧问题
+//                        Question question = questionService.getById(questionDto.getId());
+//                        Assert.notNull(question, "题目不存在");
+//                        question.setAnswer(questionDto.getAnswer());
+//                        question.setComment(question.getComment());
+//                        question.setType(question.getType());
+//                        question.setContent(question.getContent());
+//                        question.setNumber(question.getNumber());
+//                        question.setPoint(question.getPoint());
+//                        question.setRequired(question.getRequired());
+//
+//                        questionService.save(question);
+//
+//                        List<Option> optionList = optionService.list(new QueryWrapper<Option>().eq("question_id", question.getId()));
+//                        for (OptionDto optionDto : questionDto.getOptionList()) {
+//                            optionList.removeIf(option -> option.getId().equals(optionDto.getId()));
+//                        }
+//                        optionService.removeByIds(optionList);
+//
+//                        for (OptionDto optionDto : questionDto.getOptionList()) {
+//
+//                            if (optionDto.getId() == null) {
+//                                // 新选项
+//                                Option option = new Option(
+//                                        optionDto.getContent(),
+//                                        optionDto.getLimit(),
+//                                        optionDto.getNumber()
+//                                );
+//                                optionService.save(option);
+//                            } else {
+//                                // 旧选项
+//                                Option option = optionService.getById(optionDto.getId());
+//                                Assert.notNull(option, "选项不存在");
+//                                option.setContent(optionDto.getContent());
+//                                option.setLimit(optionDto.getLimit());
+//                                option.setNumber(optionDto.getNumber());
+//                                optionService.updateById(option);
+//                            }
+//                        }
+//                    }
+//
+//                }
+            id = questionnaire.getId();
             transactionManager.commit(status);
         } catch (Exception e) {
 
@@ -210,32 +212,43 @@ public class QuestionnaireController {
     }
 
 
-
-
     @RequiresAuthentication
-    @PostMapping("/publish_questionnaire")
-    @ApiOperation(value = "发布新建的问卷，并返回链接的后缀", notes = "发送用户ID（userId），和一个问题的列表，每个问题包含答案（如果必要），具体看下面的描述，" +
-            "如果这个问卷是已经修改过的，那就带着id，如果是新的问卷，id就不用填")
-    public Result submitQuestionnaire
-            (@ApiParam(value = "要提交的问卷", required = true) @Validated @RequestBody QuestionnaireDto questionnaireDto) {
-        Result result = saveQuestionnaire(questionnaireDto);
-        if (result.getCode() != 200) {
-            return Result.fail("发布失败！");
-        }
-        Questionnaire questionnaire = questionnaireService.getById((Long) result.getData());
-        questionnaire.setPreparing(0);
-        questionnaire.setDeleted(0);
-        questionnaire.setUsing(1);
-        questionnaire.setStopping(0);
+    @PostMapping("/throw_questionnaire")
+    @ApiOperation(value = "投放问卷，form data传参数 questionnaireId:问卷ID")
+    public Result throwQuestionnaire(@ApiParam(value = "要投放的问卷id", required = true) Long questionnaireId) {
+        Questionnaire questionnaire = questionnaireService.getById(questionnaireId);
+        Assert.notNull(questionnaire, "问卷不存在");
+        Assert.isTrue(ShiroUtil.getProfile().getId().equals(questionnaire.getUserId()), "您无权操作此问卷！");
         String md5 = questionnaire.getId() + "_" + SecureUtil.md5(LocalDateTime.now() + "").substring(0, 4);
+        questionnaire.setPreparing(1);
+        questionnaire.setStopping(0);
+        questionnaire.setDeleted(0);
+        questionnaire.setUsing(0);
         questionnaire.setUrl(md5);
         questionnaireService.updateById(questionnaire);
         return Result.succeed(200, "问卷发布成功!", md5);
     }
 
+
+    @RequiresAuthentication
+    @PostMapping("/publish_questionnaire")
+    @ApiOperation(value = "发布问卷，form data传参数 questionnaireId:问卷ID")
+    public Result submitQuestionnaire(@ApiParam(value = "要发布的问卷id", required = true) Long questionnaireId) {
+        Questionnaire questionnaire = questionnaireService.getById(questionnaireId);
+        Assert.notNull(questionnaire, "问卷不存在");
+        Assert.isTrue(ShiroUtil.getProfile().getId().equals(questionnaire.getUserId()), "您无权操作此问卷！");
+        questionnaire.setPreparing(0);
+        questionnaire.setDeleted(0);
+        questionnaire.setUsing(1);
+        questionnaire.setStopping(0);
+
+        questionnaireService.updateById(questionnaire);
+        return Result.succeed(200, "问卷发布成功!", null);
+    }
+
     @RequiresAuthentication
     @PostMapping("/get_link")
-    @ApiOperation(value = "获得问卷的链接后缀", notes = "直接发送问卷的id，发form data")
+    @ApiOperation(value = "获得问卷的链接后缀，相当于投放问卷", notes = "直接发送问卷的id，发form data")
     public Result getLink(@ApiParam(value = "要得到链接的问卷id", required = true) Long id) {
         Questionnaire questionnaire = questionnaireService.getById(id);
         Assert.notNull(questionnaire, "不存在该问卷");
