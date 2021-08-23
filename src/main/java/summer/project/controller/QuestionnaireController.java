@@ -248,9 +248,58 @@ public class QuestionnaireController {
     }
 
     @RequiresAuthentication
+    @PostMapping("/stop_questionnaire")
+    @ApiOperation(value = "停止问卷，form data传参数 questionnaireId:问卷ID")
+    public Result stopQuestionnaire(@ApiParam(value = "要停止的问卷id", required = true) Long questionnaireId) {
+        Questionnaire questionnaire = questionnaireService.getById(questionnaireId);
+        Assert.notNull(questionnaire, "问卷不存在");
+        Assert.isTrue(ShiroUtil.getProfile().getId().equals(questionnaire.getUserId()), "您无权操作此问卷！");
+        questionnaire.setPreparing(0);
+        questionnaire.setDeleted(0);
+        questionnaire.setUsing(0);
+        questionnaire.setStopping(1);
+
+        questionnaireService.updateById(questionnaire);
+        return Result.succeed(200, "问卷停止成功!", null);
+    }
+
+    @RequiresAuthentication
+    @PostMapping("/prepare_questionnaire")
+    @ApiOperation(value = "修改问卷状态为准备中，form data传参数 questionnaireId:问卷ID")
+    public Result prepareQuestionnaire(@ApiParam(value = "要修改状态的问卷id", required = true) Long questionnaireId) {
+        Questionnaire questionnaire = questionnaireService.getById(questionnaireId);
+        Assert.notNull(questionnaire, "问卷不存在");
+        Assert.isTrue(ShiroUtil.getProfile().getId().equals(questionnaire.getUserId()), "您无权操作此问卷！");
+        questionnaire.setPreparing(1);
+        questionnaire.setDeleted(0);
+        questionnaire.setUsing(0);
+        questionnaire.setStopping(0);
+
+        questionnaireService.updateById(questionnaire);
+        return Result.succeed(200, "问卷在准备中!", null);
+    }
+
+    @RequiresAuthentication
     @PostMapping("/get_link")
     @ApiOperation(value = "获得问卷的链接后缀，相当于投放问卷", notes = "直接发送问卷的id，发form data")
     public Result getLink(@ApiParam(value = "要得到链接的问卷id", required = true) Long id) {
+        Questionnaire questionnaire = questionnaireService.getById(id);
+        Assert.notNull(questionnaire, "不存在该问卷");
+        Assert.isTrue(questionnaire.getUserId().equals(ShiroUtil.getProfile().getId()), "您无权访问此问卷");
+        String md5;
+        if (questionnaire.getUrl() == null || questionnaire.getUrl().equals("")) {
+            md5 = questionnaire.getId() + "_" + SecureUtil.md5(LocalDateTime.now() + "").substring(0, 4);
+            questionnaire.setUrl(md5);
+            questionnaireService.updateById(questionnaire);
+        }
+        md5 = questionnaire.getUrl();
+        return Result.succeed(md5);
+    }
+
+    @RequiresAuthentication
+    @PostMapping("/get_new_link")
+    @ApiOperation(value = "获得新的链接，之前的链接失效", notes = "直接发送问卷的id，发form data")
+    public Result getNewLink(@ApiParam(value = "要得到链接的问卷id", required = true) Long id) {
         Questionnaire questionnaire = questionnaireService.getById(id);
         Assert.notNull(questionnaire, "不存在该问卷");
         Assert.isTrue(questionnaire.getUserId().equals(ShiroUtil.getProfile().getId()), "您无权访问此问卷");
