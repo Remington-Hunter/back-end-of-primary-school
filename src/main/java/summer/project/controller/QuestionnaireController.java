@@ -132,7 +132,8 @@ public class QuestionnaireController {
                             question.getId(),
                             optionDto.getContent(),
                             optionDto.getLimit(),
-                            optionDto.getNumber()
+                            optionDto.getNumber(),
+                            optionDto.getComment()
                     );
                     optionService.save(option);
                 }
@@ -459,7 +460,8 @@ public class QuestionnaireController {
                         Option option = new Option(
                                 optionDto.getContent(),
                                 optionDto.getLimit(),
-                                optionDto.getNumber()
+                                optionDto.getNumber(),
+                                optionDto.getComment()
                         );
                         optionService.save(option);
                     }
@@ -498,7 +500,8 @@ public class QuestionnaireController {
                             Option option = new Option(
                                     optionDto.getContent(),
                                     optionDto.getLimit(),
-                                    optionDto.getNumber()
+                                    optionDto.getNumber(),
+                                    optionDto.getComment()
                             );
                             optionService.save(option);
                         } else {
@@ -508,6 +511,7 @@ public class QuestionnaireController {
                             option.setContent(optionDto.getContent());
                             option.setLimit(optionDto.getLimit());
                             option.setNumber(optionDto.getNumber());
+                            option.setComment(optionDto.getComment());
                             optionService.updateById(option);
                         }
                     }
