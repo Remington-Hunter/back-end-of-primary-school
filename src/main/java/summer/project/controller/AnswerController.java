@@ -121,8 +121,13 @@ public class AnswerController {
             if (questionnaire.getEndTime() != null && now.isAfter(questionnaire.getEndTime().plusSeconds(5L))) {
                 return Result.fail(400, "问卷提交已截止。", null);
             }
+
             if (questionnaire.getStartTime() != null && now.isBefore(questionnaire.getStartTime())) {
                 return Result.fail(400, "问卷未开始。", null);
+            }
+
+            if (questionnaire.getUsing() != 1) {
+                return Result.fail(400, "当前问卷已经停止投放。", null);
             }
 
             if (questionnaire.getLimit() >= 0 && questionnaire.getLimit() < questionnaire.getAnswerNum()) {
