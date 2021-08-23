@@ -84,6 +84,9 @@ public class AnswerController {
                 case 6:
                 case 7:
                 case 8:
+                case 9:
+                case 10:
+                case 11:
                     List<Option> optionList = optionService.list(new QueryWrapper<Option>().eq("question_id", question.getId()));
                     q.put("optionList", optionList);
                     break;
@@ -149,6 +152,7 @@ public class AnswerController {
 
                 switch (question.getType()) {
                     case 6:
+                    case 7:
                         for (Option option : optionList) {
                             if (option.getNumber().equals(answerDto.getNumber()) && option.getLimit() <= option.getAnswerNum()) {
                                 return Result.fail(400, "抱歉，您的第" + answerDto.getQuestionId() + "题的选择人数已满。", null);
@@ -158,8 +162,10 @@ public class AnswerController {
                     case 1:
                     case 3:
                     case 4:
-                    case 7:
                     case 8:
+                    case 9:
+                    case 10:
+                    case 11:
                         for (Character ch : answerDto.getNumber().toCharArray()) {
                             for (Option option : optionList) {
                                 if (option.getNumber().charAt(0) == ch) {
