@@ -39,6 +39,9 @@ spring:
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**Mapper.xml
   type-aliases-package: top.azur1tee.entity
+  global-config:
+    #字段策略 0:"忽略判断",1:"非 NULL 判断"),2:"非空判断"
+    field-strategy: 1
 publishing:
   jwt:
     #    加密密钥

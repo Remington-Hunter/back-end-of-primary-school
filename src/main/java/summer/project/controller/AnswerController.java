@@ -112,12 +112,12 @@ public class AnswerController {
     public Result submitAnswer(@ApiParam(value = "问卷id和答案清单", required = true) @Validated @RequestBody AnswerListDto answerListDto) {
         Long questionnaireId = answerListDto.getQuestionnaireId();
 
-        DefaultTransactionDefinition defaultTransactionDefinition = new DefaultTransactionDefinition();
-        defaultTransactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-        TransactionStatus status = transactionManager.getTransaction(defaultTransactionDefinition);
+//        DefaultTransactionDefinition defaultTransactionDefinition = new DefaultTransactionDefinition();
+//        defaultTransactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+//        TransactionStatus status = transactionManager.getTransaction(defaultTransactionDefinition);
 
 
-        try {
+//        try {
             Questionnaire questionnaire = questionnaireService.getById(questionnaireId);
             Assert.notNull(questionnaire, "不存在该问卷");
 
@@ -183,11 +183,11 @@ public class AnswerController {
                 questionnaire.setAnswerNum(questionnaire.getAnswerNum()+1);
                 questionnaireService.updateById(questionnaire);
             }
-            transactionManager.commit(status);
-        } catch (Exception e) {
-            transactionManager.rollback(status);
-            throw e;
-        }
+//            transactionManager.commit(status);
+//        } catch (Exception e) {
+//            transactionManager.rollback(status);
+//            throw e;
+//        }
 
 
         return Result.succeed(200, "提交问卷成功", null);
