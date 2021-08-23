@@ -568,7 +568,7 @@ public class QuestionnaireController {
 
     @RequiresAuthentication
     @PostMapping("/throw_and_get_new_questionnaire")
-    @ApiOperation(value = "原有问卷放到回收站，复制一个新的问卷", notes = "发form data，问卷的 id")
+    @ApiOperation(value = "原有问卷不变，复制一个新的问卷", notes = "发form data，问卷的 id")
     public Result throwAndGetNewQuestionnaire(@ApiParam(value = "要操作的问卷的id", required = true) Long id) {
         throwToTrash(id);
         Long userId = ShiroUtil.getProfile().getId();
@@ -602,11 +602,6 @@ public class QuestionnaireController {
                 }
                 optionService.saveBatch(optionList);
             }
-            questionnaire.setDeleted(1);
-            questionnaire.setPreparing(0);
-            questionnaire.setUsing(0);
-            questionnaire.setStopping(0);
-            questionnaireService.updateById(questionnaire);
             transactionManager.commit(status);
         } catch (Exception e) {
             transactionManager.rollback(status);
