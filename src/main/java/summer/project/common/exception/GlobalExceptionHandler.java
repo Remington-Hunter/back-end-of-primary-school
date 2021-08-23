@@ -18,6 +18,14 @@ import summer.project.common.lang.Result;
 @RestControllerAdvice // 异步全局异常处理
 public class GlobalExceptionHandler {
 
+//    java.lang.IllegalArgumentException
+//    @ResponseStatus(HttpStatus.UNAUTHORIZED) // 无权限
+//    @ExceptionHandler(value = ShiroException.class)
+//    public Result handler(ShiroException e) {
+//        log.error("无权限异常：----------------{}", e);
+//        return Result.fail(401, e.getMessage(), null);
+//    }
+
     @ResponseStatus(HttpStatus.UNAUTHORIZED) // 无权限
     @ExceptionHandler(value = ShiroException.class)
     public Result handler(ShiroException e) {

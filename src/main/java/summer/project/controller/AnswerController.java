@@ -180,14 +180,15 @@ public class AnswerController {
                 }
 
                 answerService.save(answer);
-                questionnaire.setAnswerNum(questionnaire.getAnswerNum()+1);
-                questionnaireService.updateById(questionnaire);
+
             }
 //            transactionManager.commit(status);
 //        } catch (Exception e) {
 //            transactionManager.rollback(status);
 //            throw e;
 //        }
+        questionnaire.setAnswerNum(questionnaire.getAnswerNum()+1);
+        questionnaireService.updateById(questionnaire);
 
 
         return Result.succeed(200, "提交问卷成功", null);
