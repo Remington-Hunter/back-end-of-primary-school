@@ -119,6 +119,7 @@ public class QuestionnaireController {
                             .set(Questionnaire::getNeedNum, questionnaireDto.getNeedNum())
                             .set(Questionnaire::getLimit, questionnaireDto.getLimit())
                             .set(Questionnaire::getType, questionnaireDto.getType())
+                            .set(Questionnaire::getDescription, questionnaireDto.getDescription())
                             .eq(Questionnaire::getId, questionnaireDto.getId())
             );
 
