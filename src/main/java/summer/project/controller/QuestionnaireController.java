@@ -415,7 +415,12 @@ public class QuestionnaireController {
     @ApiOperation(value = "得到问卷", notes = "把链接/vj/后面的那一串码抠出来发过来")
     public Result getQuestionnaire(@ApiParam(value = "xx_xxxxx的码", required = true) String md5) {
         Questionnaire questionnaire = questionnaireService.getOne(new QueryWrapper<Questionnaire>().eq("url", md5));
-        Assert.notNull(questionnaire, "链接已失效");
+
+//        Assert.notNull(questionnaire, "链接已失效");
+        if (questionnaire == null) {
+            return Result.fail("链接已失效");
+        }
+
         List<Question> questionList = questionService.list(new QueryWrapper<Question>().eq("questionnaire", questionnaire.getId()));
 
         List<HashMap<String, Object>> questions = new ArrayList<>();
