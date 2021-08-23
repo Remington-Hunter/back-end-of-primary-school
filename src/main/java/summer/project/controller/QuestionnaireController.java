@@ -220,13 +220,18 @@ public class QuestionnaireController {
         Questionnaire questionnaire = questionnaireService.getById(questionnaireId);
         Assert.notNull(questionnaire, "问卷不存在");
         Assert.isTrue(ShiroUtil.getProfile().getId().equals(questionnaire.getUserId()), "您无权操作此问卷！");
-        String md5 = questionnaire.getId() + "_" + SecureUtil.md5(LocalDateTime.now() + "").substring(0, 4);
-        questionnaire.setPreparing(1);
+
+        String md5;
+        if (questionnaire.getUrl() == null || questionnaire.getUrl().equals("")) {
+            md5 = questionnaire.getId() + "_" + SecureUtil.md5(LocalDateTime.now() + "").substring(0, 4);
+            questionnaire.setUrl(md5);
+        }
+
         questionnaire.setStopping(0);
         questionnaire.setDeleted(0);
         questionnaire.setUsing(0);
-        questionnaire.setUrl(md5);
         questionnaireService.updateById(questionnaire);
+        md5 = questionnaire.getUrl();
         return Result.succeed(200, "问卷发布成功!", md5);
     }
 
