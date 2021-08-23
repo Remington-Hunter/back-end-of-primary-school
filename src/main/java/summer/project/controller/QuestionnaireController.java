@@ -474,7 +474,7 @@ public class QuestionnaireController {
     @PostMapping("/edit_questionnaire")
     @ApiOperation(value = "保存问卷", notes = "发送用户ID（userId），和一个问题的列表，每个问题包含答案（如果必要），具体看下面的描述，" +
             "如果这个问卷是已经修改过的，那就带着id，如果是新的问卷，id就不用填")
-    public Result editQuestionnaire(@ApiParam(value = "要提交问卷", required = true) @Validated @RequestBody QuestionnaireDto questionnaireDto) {
+    public Result editQuestionnaire(@ApiParam(value = "问卷的信息", required = true) @Validated @RequestBody QuestionnaireDto questionnaireDto) {
 
         DefaultTransactionDefinition defaultTransactionDefinition = new DefaultTransactionDefinition();
         defaultTransactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
@@ -619,6 +619,67 @@ public class QuestionnaireController {
         return Result.succeed(200, "问卷保存成功!", id);
     }
 
+    @RequiresAuthentication
+    @PostMapping("/delete_and_get_questionnaire_by_id")
+    @ApiOperation(value = "删除问卷所有调查结果并获得问卷的题目信息", notes = "发form data，要删除的 id")
+    public Result deleteAndGetQuestionnaireById(@ApiParam(value = "要操作的问卷的id", required = true) Long id) {
+        Long userId = ShiroUtil.getProfile().getId();
+        Questionnaire questionnaire = questionnaireService.getById(id);
+        Assert.notNull(questionnaire, "问卷不存在");
+        Assert.isTrue(userId.equals(questionnaire.getUserId()), "你无权操作此问卷！");
+        questionnaire.setUsing(0);
+        questionnaire.setDeleted(1);
+        questionnaire.setPreparing(0);
+        questionnaire.setStopping(0);
+        questionnaire.setUrl("");
+
+        questionnaireService.updateById(questionnaire);
+
+        return Result.succeed("该问卷已放入回收站，之前发布的链接已失效。");
+    }
 
 
+    @RequiresAuthentication
+    @PostMapping("/throw_and_get_new_questionnaire")
+    @ApiOperation(value = "原有问卷放到回收站，复制一个新的问卷", notes = "发form data，问卷的 id")
+    public Result throwAndGetNewQuestionnaire(@ApiParam(value = "要操作的问卷的id", required = true) Long id) {
+        throwToTrash(id);
+        Long userId = ShiroUtil.getProfile().getId();
+        Questionnaire questionnaire = questionnaireService.getById(id);
+        Assert.notNull(questionnaire, "问卷不存在");
+        Assert.isTrue(userId.equals(questionnaire.getUserId()), "你无权操作此问卷！");
+        DefaultTransactionDefinition defaultTransactionDefinition = new DefaultTransactionDefinition();
+        defaultTransactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        TransactionStatus status = transactionManager.getTransaction(defaultTransactionDefinition);
+        Questionnaire newQuestionnaire = null;
+        try {
+            newQuestionnaire = (Questionnaire) CopyUtil.deepCopy(questionnaire);
+            newQuestionnaire.setAnswerNum(0L);
+            newQuestionnaire.setPreparing(1);
+            newQuestionnaire.setUsing(0);
+            newQuestionnaire.setDeleted(0);
+            newQuestionnaire.setStopping(0);
+            newQuestionnaire.setUrl("");
+            questionnaireService.save(newQuestionnaire);
+
+            List<Question> questionList = questionService.list(new QueryWrapper<Question>().eq("questionnaire", questionnaire.getId()));
+
+            for (Question question : questionList) {
+                List<Option> optionList = optionService.list(new QueryWrapper<Option>().eq("question_id", question.getId()));
+                question.setQuestionnaire(newQuestionnaire.getId());
+                questionService.save(question);
+                for (Option option : optionList) {
+                    option.setQuestionId(question.getId());
+                    option.setAnswerNum(0L);
+                }
+                optionService.saveBatch(optionList);
+            }
+            transactionManager.commit(status);
+        } catch (Exception e) {
+            transactionManager.rollback(status);
+        }
+
+        assert newQuestionnaire != null;
+        return getQuestionnaireById(newQuestionnaire.getId());
+    }
 }
