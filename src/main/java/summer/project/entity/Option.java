@@ -45,15 +45,17 @@ public class Option implements Serializable {
 
     private Long answerNum;
 
+    private String comment;
 
-    public Option(Long questionId, String content, Long limit, String number) {
+
+    public Option(Long questionId, String content, Long limit, String number, String comment) {
         this.questionId = questionId;
         this.content = content;
         this.limit = limit;
         this.number = number;
     }
 
-    public Option(String content, Long limit, String number) {
+    public Option(String content, Long limit, String number, String comment) {
         this.content = content;
         this.limit = limit;
         this.number = number;

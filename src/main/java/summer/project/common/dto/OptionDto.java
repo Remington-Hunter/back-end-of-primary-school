@@ -23,4 +23,6 @@ public class OptionDto implements Serializable {
 
     private String number;
 
+    private String comment;
+
 }
