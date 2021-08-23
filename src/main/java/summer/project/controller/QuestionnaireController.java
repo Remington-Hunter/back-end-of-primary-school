@@ -111,6 +111,7 @@ public class QuestionnaireController {
                 questionnaire.setNeedNum(questionnaireDto.getNeedNum());
                 questionnaire.setLimit(questionnaireDto.getLimit());
                 questionnaire.setType(questionnaireDto.getType());
+                questionnaire.setDescription(questionnaire.getDescription());
                 questionnaireService.updateById(questionnaire);
 //                List<Question> questionList = questionService.list(new QueryWrapper<Question>().eq("questionnaire", questionnaire.getId()));
                 questionService.remove(new QueryWrapper<Question>().eq("questionnaire", questionnaire.getId()));
