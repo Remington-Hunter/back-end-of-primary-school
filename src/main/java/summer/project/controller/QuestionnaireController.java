@@ -5,6 +5,7 @@ import cn.hutool.core.lang.Assert;
 import cn.hutool.core.map.MapBuilder;
 import cn.hutool.crypto.SecureUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import io.swagger.annotations.*;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.crypto.hash.Hash;
@@ -26,6 +27,7 @@ import summer.project.entity.Answer;
 import summer.project.entity.Option;
 import summer.project.entity.Question;
 import summer.project.entity.Questionnaire;
+import summer.project.mapper.QuestionnaireMapper;
 import summer.project.service.AnswerService;
 import summer.project.service.OptionService;
 import summer.project.service.QuestionService;
@@ -67,6 +69,9 @@ public class QuestionnaireController {
     @Autowired
     AnswerService answerService;
 
+    @Autowired
+    QuestionnaireMapper questionnaireMapper;
+
     //    @Transactional
     @RequiresAuthentication
     @PostMapping("/save_questionnaire")
@@ -103,16 +108,34 @@ public class QuestionnaireController {
                 questionnaire = questionnaireService.getById(questionnaireDto.getId());
                 Assert.notNull(questionnaire, "不存在该问卷。");
                 Assert.isTrue(questionnaire.getUserId().equals(ShiroUtil.getProfile().getId()), "无权限修改他人问卷。");
-                questionnaire.setId(questionnaireDto.getId());
-                questionnaire.setCreateTime(LocalDateTime.now());
-                questionnaire.setTitle(questionnaireDto.getTitle());
-                questionnaire.setStartTime(questionnaireDto.getStartTime());
-                questionnaire.setEndTime(questionnaireDto.getEndTime());
-                questionnaire.setNeedNum(questionnaireDto.getNeedNum());
-                questionnaire.setLimit(questionnaireDto.getLimit());
-                questionnaire.setType(questionnaireDto.getType());
-                questionnaire.setDescription(questionnaireDto.getDescription());
-                questionnaireService.updateById(questionnaire);
+
+                questionnaireMapper.update(
+                        null,
+                        Wrappers.<Questionnaire>lambdaUpdate()
+                                .set(Questionnaire::getCreateTime, LocalDateTime.now())
+                                .set(Questionnaire::getTitle, questionnaireDto.getTitle())
+                                .set(Questionnaire::getStartTime, questionnaireDto.getStartTime())
+                                .set(Questionnaire::getEndTime, questionnaireDto.getEndTime())
+                                .set(Questionnaire::getNeedNum, questionnaireDto.getNeedNum())
+                                .set(Questionnaire::getLimit, questionnaireDto.getLimit())
+                                .set(Questionnaire::getType, questionnaireDto.getType())
+                                .eq(Questionnaire::getId, questionnaireDto.getId())
+                );
+
+//                questionnaire.setId(questionnaireDto.getId());
+//                questionnaire.setCreateTime(LocalDateTime.now());
+//                questionnaire.setTitle(questionnaireDto.getTitle());
+//                questionnaire.setStartTime(questionnaireDto.getStartTime());
+//                questionnaire.setEndTime(questionnaireDto.getEndTime());
+//                questionnaire.setNeedNum(questionnaireDto.getNeedNum());
+//                questionnaire.setLimit(questionnaireDto.getLimit());
+//                questionnaire.setType(questionnaireDto.getType());
+//                questionnaire.setDescription(questionnaireDto.getDescription());
+//
+//                System.out.println(questionnaire.getStartTime());
+//                System.out.println(questionnaire.getEndTime());
+
+//                questionnaireService.updateById(questionnaire);
 //                List<Question> questionList = questionService.list(new QueryWrapper<Question>().eq("questionnaire", questionnaire.getId()));
                 questionService.remove(new QueryWrapper<Question>().eq("questionnaire", questionnaire.getId()));
             }

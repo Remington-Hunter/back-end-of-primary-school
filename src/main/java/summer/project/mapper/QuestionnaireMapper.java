@@ -1,5 +1,6 @@
 package summer.project.mapper;
 
+import org.springframework.stereotype.Service;
 import summer.project.entity.Questionnaire;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
@@ -11,6 +12,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author JerryZhao
  * @since 2021-08-20
  */
+@Service
 public interface QuestionnaireMapper extends BaseMapper<Questionnaire> {
 
 }
