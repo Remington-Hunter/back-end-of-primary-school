@@ -65,4 +65,24 @@ public class QRCodeController {
         }
     }
 
+    @ApiOperation(value = "下载二维码")
+    @GetMapping(value = "/downloadQRCode")
+    public void downloadQRCode(HttpServletResponse response,
+                          @ApiParam(value = "链接") @RequestParam("content") String content,
+                          @ApiParam(value = "logo的地址") @RequestParam(value = "logoUrl", required = false) String logoUrl) throws Exception {
+        response.setHeader("Content-Disposition", "attachment; filename=link.png");
+        ServletOutputStream stream = null;
+        try {
+            stream = response.getOutputStream();
+            QRCodeUtil.getQRCode(content, logoUrl, stream);
+        } catch (Exception e) {
+            e.getStackTrace();
+        } finally {
+            if (stream != null) {
+                stream.flush();
+                stream.close();
+            }
+        }
+    }
+
 }
