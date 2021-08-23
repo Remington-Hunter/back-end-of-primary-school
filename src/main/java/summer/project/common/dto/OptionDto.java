@@ -13,8 +13,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class OptionDto implements Serializable {
 
-    @NotBlank(message = "题目不能为空")
-    @Size(max = 254, message = "题目不超过250个字")
+    @Size(max = 254, message = "选项不超过250个字")
     String content;
 
     private Long id;
