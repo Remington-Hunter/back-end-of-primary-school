@@ -155,7 +155,7 @@ public class AnswerController {
                     case 7:
                         for (Option option : optionList) {
                             if (option.getNumber().equals(answerDto.getNumber()) && option.getLimit() <= option.getAnswerNum()) {
-                                return Result.fail(400, "抱歉，您的第" + answerDto.getQuestionId() + "题的选择人数已满。", null);
+                                return Result.fail(400, "抱歉，第" + answerDto.getNumber() + "题的选择人数已满。", null);
                             }
                         }
                     case 0:
