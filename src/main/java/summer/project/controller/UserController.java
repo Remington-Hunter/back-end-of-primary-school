@@ -38,6 +38,7 @@ public class UserController {
     @PostMapping("/get_info")
     @ApiOperation(value = "获取个人信息")
     private Result getInfo() {
+        System.out.println(ShiroUtil.getProfile().getId());
         return Result.succeed(userService.getById(ShiroUtil.getProfile().getId()));
     }
 
