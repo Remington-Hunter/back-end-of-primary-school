@@ -40,9 +40,12 @@ public class Question implements Serializable {
      * 3-评分单选
      * 4-评分多选
      * 5-评分填空
-     * 6-报名多选
-     * 7-下拉题
-     * 8-评分题
+     * 6-报名单选
+     * 7-报名多选
+     * 8-下拉题
+     * 9-评分题
+     * 10-投票单选
+     * 11-投票多选
      */
     private Integer type;
 
