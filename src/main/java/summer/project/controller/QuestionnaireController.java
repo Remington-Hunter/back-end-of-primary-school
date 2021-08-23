@@ -22,9 +22,11 @@ import summer.project.common.dto.OptionDto;
 import summer.project.common.dto.QuestionDto;
 import summer.project.common.dto.QuestionnaireDto;
 import summer.project.common.lang.Result;
+import summer.project.entity.Answer;
 import summer.project.entity.Option;
 import summer.project.entity.Question;
 import summer.project.entity.Questionnaire;
+import summer.project.service.AnswerService;
 import summer.project.service.OptionService;
 import summer.project.service.QuestionService;
 import summer.project.service.QuestionnaireService;
@@ -61,6 +63,9 @@ public class QuestionnaireController {
 
     @Autowired
     PlatformTransactionManager transactionManager;
+
+    @Autowired
+    AnswerService answerService;
 
     //    @Transactional
     @RequiresAuthentication
@@ -423,6 +428,7 @@ public class QuestionnaireController {
             newQuestionnaire.setUsing(0);
             newQuestionnaire.setDeleted(0);
             newQuestionnaire.setStopping(0);
+            newQuestionnaire.setCreateTime(LocalDateTime.now());
             newQuestionnaire.setUrl("");
             questionnaireService.save(newQuestionnaire);
 
@@ -627,15 +633,31 @@ public class QuestionnaireController {
         Questionnaire questionnaire = questionnaireService.getById(id);
         Assert.notNull(questionnaire, "问卷不存在");
         Assert.isTrue(userId.equals(questionnaire.getUserId()), "你无权操作此问卷！");
-        questionnaire.setUsing(0);
-        questionnaire.setDeleted(1);
-        questionnaire.setPreparing(0);
-        questionnaire.setStopping(0);
-        questionnaire.setUrl("");
 
-        questionnaireService.updateById(questionnaire);
+        DefaultTransactionDefinition defaultTransactionDefinition = new DefaultTransactionDefinition();
+        defaultTransactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        TransactionStatus status = transactionManager.getTransaction(defaultTransactionDefinition);
 
-        return Result.succeed("该问卷已放入回收站，之前发布的链接已失效。");
+        try {
+            questionnaire.setCreateTime(LocalDateTime.now());
+            questionnaireService.updateById(questionnaire);
+            List<Question> questionList = questionService.list(new QueryWrapper<Question>().eq("questionnaire", id));
+            for (Question question : questionList) {
+                answerService.remove(new QueryWrapper<Answer>().eq("question_id", question.getId()));
+                List<Option> optionList = optionService.list(new QueryWrapper<Option>().eq("question_id", question.getId()));
+                for (Option option : optionList) {
+                    option.setAnswerNum(0L);
+                }
+                optionService.updateBatchById(optionList);
+            }
+
+            transactionManager.commit(status);
+        } catch (Exception e) {
+            transactionManager.rollback(status);
+        }
+
+
+        return getQuestionnaireById(id);
     }
 
 
@@ -659,6 +681,7 @@ public class QuestionnaireController {
             newQuestionnaire.setUsing(0);
             newQuestionnaire.setDeleted(0);
             newQuestionnaire.setStopping(0);
+            newQuestionnaire.setCreateTime(LocalDateTime.now());
             newQuestionnaire.setUrl("");
             questionnaireService.save(newQuestionnaire);
 
@@ -674,6 +697,11 @@ public class QuestionnaireController {
                 }
                 optionService.saveBatch(optionList);
             }
+            questionnaire.setDeleted(1);
+            questionnaire.setPreparing(0);
+            questionnaire.setUsing(0);
+            questionnaire.setStopping(0);
+            questionnaireService.updateById(questionnaire);
             transactionManager.commit(status);
         } catch (Exception e) {
             transactionManager.rollback(status);
