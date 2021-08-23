@@ -423,6 +423,7 @@ public class QuestionnaireController {
             newQuestionnaire.setUsing(0);
             newQuestionnaire.setDeleted(0);
             newQuestionnaire.setStopping(0);
+            newQuestionnaire.setUrl("");
             questionnaireService.save(newQuestionnaire);
 
             List<Question> questionList = questionService.list(new QueryWrapper<Question>().eq("questionnaire", questionnaire.getId()));
