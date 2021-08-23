@@ -9,7 +9,9 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import summer.project.entity.TestUser;
+import summer.project.entity.User;
 import summer.project.service.TestUserService;
+import summer.project.service.UserService;
 import summer.project.util.JwtUtils;
 import summer.project.util.ShiroUtil;
 
@@ -20,7 +22,7 @@ public class AccountRealm extends AuthorizingRealm {
     JwtUtils jwtUtils;
 
     @Autowired
-    TestUserService userService;
+    UserService userService;
 
     // 必须支持JwtToken
     @Override
@@ -54,7 +56,7 @@ public class AccountRealm extends AuthorizingRealm {
 
         JwtToken jwtToken = (JwtToken) authenticationToken;
         String userId = jwtUtils.getClaimByToken((String) jwtToken.getPrincipal()).getSubject();
-        TestUser user = userService.getById(Long.parseLong(userId));
+        User user = userService.getById(Long.parseLong(userId));
         if (user == null) {
             throw new UnknownAccountException("账户不存在");
         }

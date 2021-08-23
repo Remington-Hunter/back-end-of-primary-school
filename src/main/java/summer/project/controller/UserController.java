@@ -15,8 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 import summer.project.common.dto.EmailDto;
 import summer.project.common.lang.Result;
 import summer.project.entity.User;
+import summer.project.service.QuestionnaireService;
 import summer.project.service.UserService;
 import summer.project.util.ShiroUtil;
+
+import javax.annotation.Resource;
 
 /**
  * <p>
