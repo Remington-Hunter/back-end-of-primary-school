@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import java.time.LocalDateTime;
 import java.io.Serializable;
 
+import com.baomidou.mybatisplus.annotation.Version;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -65,6 +66,9 @@ public class Questionnaire implements Serializable {
 
     @TableField("`type`")
     private Integer type;
+
+    @Version // 这个注解是关键
+    private Integer version;
 
 
     public Questionnaire(Long userId,

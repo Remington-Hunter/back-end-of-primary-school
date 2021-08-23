@@ -3,6 +3,8 @@ package summer.project.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
+
+import com.baomidou.mybatisplus.annotation.Version;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -38,6 +40,9 @@ public class User implements Serializable {
     private Integer vip;
 
     private String email;
+
+    @Version // 这个注解是关键
+    private Integer version;
 
     public User(String username, String password) {
         this.username = username;

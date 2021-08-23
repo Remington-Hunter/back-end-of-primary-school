@@ -1,11 +1,9 @@
 package summer.project.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.io.Serializable;
 
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -60,4 +58,7 @@ public class Option implements Serializable {
         this.limit = limit;
         this.number = number;
     }
+
+    @Version // 这个注解是关键
+    private Integer version;
 }
