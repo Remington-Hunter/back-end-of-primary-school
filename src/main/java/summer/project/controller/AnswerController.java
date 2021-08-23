@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.tomcat.jni.Time;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -146,7 +147,6 @@ public class AnswerController {
 
                 List<Option> optionList = optionService.list(new QueryWrapper<Option>().eq("question_id", question.getId()));
 
-
                 switch (question.getType()) {
                     case 6:
                         for (Option option : optionList) {
@@ -174,6 +174,8 @@ public class AnswerController {
                 }
 
                 answerService.save(answer);
+                questionnaire.setAnswerNum(questionnaire.getAnswerNum()+1);
+                questionnaireService.updateById(questionnaire);
             }
             transactionManager.commit(status);
         } catch (Exception e) {

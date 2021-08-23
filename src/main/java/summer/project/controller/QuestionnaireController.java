@@ -184,6 +184,7 @@ public class QuestionnaireController {
         questionnaire.setDeleted(0);
         questionnaire.setUsing(1);
         questionnaire.setStopping(0);
+        questionnaire.setCreateTime(LocalDateTime.now());
 
         questionnaireService.updateById(questionnaire);
         return Result.succeed(200, "问卷发布成功!", null);
