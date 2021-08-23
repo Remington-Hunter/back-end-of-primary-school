@@ -51,12 +51,14 @@ public class Option implements Serializable {
         this.content = content;
         this.limit = limit;
         this.number = number;
+        this.comment = comment;
     }
 
     public Option(String content, Long limit, String number, String comment) {
         this.content = content;
         this.limit = limit;
         this.number = number;
+        this.comment = comment;
     }
 
     @Version // 这个注解是关键
