@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 
 import java.io.Serializable;
 
+import com.baomidou.mybatisplus.annotation.Version;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -58,6 +59,9 @@ public class Question implements Serializable {
     private String comment;
 
     private Integer required;
+
+    @Version // 这个注解是关键
+    private Integer version;
 
     public Question(String content, String answer, Long point, Integer type, Long number, Integer required, String comment) {
         this.content = content;

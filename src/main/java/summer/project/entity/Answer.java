@@ -3,6 +3,8 @@ package summer.project.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
+
+import com.baomidou.mybatisplus.annotation.Version;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -31,5 +33,7 @@ public class Answer implements Serializable {
 
     private Long questionId;
 
+    @Version // 这个注解是关键
+    private Integer version;
 
 }
