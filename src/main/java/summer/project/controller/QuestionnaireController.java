@@ -104,7 +104,8 @@ public class QuestionnaireController {
                 questionnaire.setStartTime(questionnaireDto.getStartTime());
                 questionnaire.setEndTime(questionnaireDto.getEndTime());
                 questionnaire.setNeedNum(questionnaireDto.getNeedNum());
-                questionnaire.setLimit(questionnaire.getLimit());
+                questionnaire.setLimit(questionnaireDto.getLimit());
+                questionnaire.setType(questionnaireDto.getType());
                 questionnaireService.updateById(questionnaire);
 //                List<Question> questionList = questionService.list(new QueryWrapper<Question>().eq("questionnaire", questionnaire.getId()));
                 questionService.remove(new QueryWrapper<Question>().eq("questionnaire", questionnaire.getId()));
@@ -327,6 +328,33 @@ public class QuestionnaireController {
     }
 
     @RequiresAuthentication
+    @PostMapping("/get_questionnaire_by_id")
+    @ApiOperation(value = "获得所有的问卷的基本信息", notes = "带着Authorization请求头，需要id")
+    @ApiResponses(
+            @ApiResponse(code = 200, message = "你的data长这个样")
+    )
+    public Result getQuestionnaireById(@ApiParam(value = "问卷Id", required = true) Long id) {
+        Questionnaire questionnaire = questionnaireService.getById(id);
+        Assert.notNull(questionnaire, "不存在该问卷。");
+        List<Question> questionList = questionService.list(new QueryWrapper<Question>().eq("questionnaire", id));
+
+        List<HashMap<String, Object>> questions = new ArrayList<>();
+        for (Question question : questionList) {
+            HashMap<String, Object> qMap = new HashMap<>();
+            qMap.put("question", question);
+            qMap.put("optionList", optionService.list(new QueryWrapper<Option>().eq("question_id", question.getId())));
+            questions.add(qMap);
+        }
+
+
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("questionnaire", questionnaire);
+        result.put("questionList", questions);
+
+        return Result.succeed(result);
+    }
+
+    @RequiresAuthentication
     @PostMapping("/throw_to_trashcan")
     @ApiOperation(value = "将问卷放到回收站", notes = "直接发送问卷的id，发form data")
     public Result throwToTrash(@ApiParam(value = "要放入回收站的问卷id", required = true) Long id) {
@@ -387,8 +415,9 @@ public class QuestionnaireController {
         DefaultTransactionDefinition defaultTransactionDefinition = new DefaultTransactionDefinition();
         defaultTransactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
         TransactionStatus status = transactionManager.getTransaction(defaultTransactionDefinition);
+        Questionnaire newQuestionnaire = null;
         try {
-            Questionnaire newQuestionnaire = (Questionnaire) CopyUtil.deepCopy(questionnaire);
+            newQuestionnaire = (Questionnaire) CopyUtil.deepCopy(questionnaire);
             newQuestionnaire.setAnswerNum(0L);
             newQuestionnaire.setPreparing(1);
             newQuestionnaire.setUsing(0);
@@ -413,7 +442,8 @@ public class QuestionnaireController {
             transactionManager.rollback(status);
         }
 
-        return Result.succeed(201, "复制成功", null);
+        assert newQuestionnaire != null;
+        return Result.succeed(201, "复制成功", newQuestionnaire.getId());
     }
 
     @PostMapping("/get_questionnaire")
@@ -587,6 +617,7 @@ public class QuestionnaireController {
 
         return Result.succeed(200, "问卷保存成功!", id);
     }
+
 
 
 }
