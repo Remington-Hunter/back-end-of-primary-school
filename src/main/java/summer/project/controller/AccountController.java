@@ -20,6 +20,7 @@ import summer.project.common.dto.SignUpDto;
 import summer.project.common.lang.Result;
 import summer.project.entity.TestUser;
 import summer.project.entity.User;
+import summer.project.mapper.UserMapper;
 import summer.project.service.TestUserService;
 import summer.project.service.UserService;
 import summer.project.util.JwtUtils;
@@ -43,6 +44,9 @@ public class AccountController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    UserMapper userMapper;
 
     @ApiOperation(value = "登录(使用用户名和密码)", notes = "普通登录接口，使用用户名和密码登录")
     @PostMapping("/login_username_password")
@@ -140,38 +144,56 @@ public class AccountController {
         return Result.succeed(200, "测试成功", LocalDateTime.now());
     }
 
-//    @RequiresAuthentication
-    @PostMapping("/get_info")
+    //    @RequiresAuthentication
+
+    @RequiresAuthentication
     @ApiOperation(value = "获取个人信息")
-    private Result getInfo() {
-        System.out.println(ShiroUtil.getProfile().getId());
-        return Result.succeed(userService.getById(ShiroUtil.getProfile().getId()));
+    @PostMapping("/get_info")
+    public Result getInfo() {
+//        System.out.println(ShiroUtil.getProfile().getId());
+        User user = userService.getById(ShiroUtil.getProfile().getId());
+        if (user == null) {
+            return Result.succeed(201, "不存在该用户。", null);
+        }
+        return Result.succeed(user);
     }
 
     @RequiresAuthentication
     @PostMapping("/set_phone")
     @ApiOperation(value = "设置")
-    private Result setPhone(@ApiParam(value = "手机号（字符串）") String phone) {
+    public Result setPhone(@ApiParam(value = "手机号（字符串）") String phone) {
         User user = userService.getById(ShiroUtil.getProfile().getId());
+        if (user == null) {
+            return Result.succeed(201, "不存在该用户。", null);
+        }
         user.setPhone(phone);
+        userService.updateById(user);
         return Result.succeed(200, "手机号设置成功", user);
     }
 
     @RequiresAuthentication
     @PostMapping("/set_email")
     @ApiOperation(value = "设置")
-    private Result setEmail(@ApiParam(value = "邮箱（字符串）") @Validated EmailDto emailDto) {
+    public Result setEmail(@ApiParam(value = "邮箱（字符串）") @Validated EmailDto emailDto) {
         User user = userService.getById(ShiroUtil.getProfile().getId());
+        if (user == null) {
+            return Result.succeed(201, "不存在该用户。", null);
+        }
         user.setEmail(emailDto.getEmail());
+        userService.updateById(user);
         return Result.succeed(200, "邮箱设置成功", user);
     }
 
     @RequiresAuthentication
     @PostMapping("/set_wechat")
     @ApiOperation(value = "设置")
-    private Result setWechat(@ApiParam(value = "微信号（字符串）") String wechat) {
+    public Result setWechat(@ApiParam(value = "微信号（字符串）") String wechat) {
         User user = userService.getById(ShiroUtil.getProfile().getId());
+        if (user == null) {
+            return Result.succeed(201, "不存在该用户。", null);
+        }
         user.setWechatId(wechat);
+        userService.updateById(user);
         return Result.succeed(200, "微信设置成功", user);
     }
 
