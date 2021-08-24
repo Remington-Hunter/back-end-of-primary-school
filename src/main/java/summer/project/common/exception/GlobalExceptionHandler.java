@@ -26,7 +26,7 @@ public class GlobalExceptionHandler {
 //        return Result.fail(401, e.getMessage(), null);
 //    }
 
-    @ResponseStatus(HttpStatus.UNAUTHORIZED) // 无权限
+    @ResponseStatus(HttpStatus.ACCEPTED) // 无权限
     @ExceptionHandler(value = ShiroException.class)
     public Result handler(ShiroException e) {
         log.error("无权限异常：----------------{}", e);
@@ -34,14 +34,14 @@ public class GlobalExceptionHandler {
     }
 
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.ACCEPTED)
     @ExceptionHandler(value = RuntimeException.class)
     public Result handler(RuntimeException e) {
         log.error("运行时异常：----------------{}", e);
         return Result.fail(e.getMessage());
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.ACCEPTED)
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public Result handler(MethodArgumentNotValidException e) {
         log.error("实体校验异常：----------------{}", e);
@@ -51,7 +51,7 @@ public class GlobalExceptionHandler {
         return Result.fail(objectError.getDefaultMessage());
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.ACCEPTED)
     @ExceptionHandler(value = BindException.class)
     public Result handler(BindException e ) {
         log.error("实体校验2异常：----------------{}", e);
@@ -63,7 +63,7 @@ public class GlobalExceptionHandler {
 
 
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.ACCEPTED)
     @ExceptionHandler(value = UnauthorizedException.class)
     public Result handler(UnauthorizedException e ) {
         log.error("未授权异常：----------------{}", e);
@@ -71,7 +71,7 @@ public class GlobalExceptionHandler {
         return Result.fail("您无权限进行此操作，原因是未授权。");
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.ACCEPTED)
     @ExceptionHandler(value = UnauthenticatedException.class)
     public Result handler(UnauthenticatedException e ) {
         log.error("未认证异常：----------------{}", e);

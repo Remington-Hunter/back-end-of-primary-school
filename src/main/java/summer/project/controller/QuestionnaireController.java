@@ -600,7 +600,6 @@ public class QuestionnaireController {
     @PostMapping("/throw_and_get_new_questionnaire")
     @ApiOperation(value = "原有问卷不变，复制一个新的问卷", notes = "发form data，问卷的 id")
     public Result throwAndGetNewQuestionnaire(@ApiParam(value = "要操作的问卷的id", required = true) Long id) throws Exception {
-        throwToTrash(id);
         Long userId = ShiroUtil.getProfile().getId();
         Questionnaire questionnaire = questionnaireService.getById(id);
         Assert.notNull(questionnaire, "问卷不存在");
