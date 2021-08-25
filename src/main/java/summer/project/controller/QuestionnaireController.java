@@ -378,7 +378,7 @@ public class QuestionnaireController {
 //        DefaultTransactionDefinition defaultTransactionDefinition = new DefaultTransactionDefinition();
 //        defaultTransactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
 //        TransactionStatus status = transactionManager.getTransaction(defaultTransactionDefinition);
-        Questionnaire newQuestionnaire = null;
+        Questionnaire newQuestionnaire;
 //        try {
         newQuestionnaire = (Questionnaire) CopyUtil.deepCopy(questionnaire);
         newQuestionnaire.setTitle(questionnaire.getTitle()+"_副本");
@@ -408,7 +408,6 @@ public class QuestionnaireController {
 //            transactionManager.rollback(status);
 //        }
 
-        assert newQuestionnaire != null;
         return Result.succeed(201, "复制成功", newQuestionnaire.getId());
     }
 

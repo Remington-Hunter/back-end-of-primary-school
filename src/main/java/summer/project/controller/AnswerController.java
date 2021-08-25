@@ -69,7 +69,7 @@ public class AnswerController {
         Questionnaire questionnaire = questionnaireService.getById(id);
         Assert.notNull(questionnaire, "不存在该问卷");
 
-        Assert.isTrue(questionnaire.getId().equals(ShiroUtil.getProfile().getId()), "您无权查看此问卷！");
+        Assert.isTrue(questionnaire.getUserId().equals(ShiroUtil.getProfile().getId()), "您无权查看此问卷！");
         HashMap<String, Object> result = new HashMap<>();
         List<AnswerList> answerListList = answerListService.list(new QueryWrapper<AnswerList>().eq("questionnaire", questionnaire.getId()));
         List<Object> answerInfo = new ArrayList<>();
@@ -102,7 +102,7 @@ public class AnswerController {
         Questionnaire questionnaire = questionnaireService.getById(id);
         Assert.notNull(questionnaire, "不存在该问卷");
 
-        Assert.isTrue(questionnaire.getId().equals(ShiroUtil.getProfile().getId()), "您无权查看此问卷！");
+        Assert.isTrue(questionnaire.getUserId().equals(ShiroUtil.getProfile().getId()), "您无权查看此问卷！");
 
         List<Question> questionList = questionService.list(new QueryWrapper<Question>().eq("questionnaire", id));
 

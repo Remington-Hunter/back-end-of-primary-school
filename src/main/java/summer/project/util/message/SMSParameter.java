@@ -34,7 +34,7 @@ public class SMSParameter {
     public int templateId = 1091392;
     // 签名，签名参数使用的是`签名内容`，而不是`签名ID`，真实的签名需要在短信控制台申请，这里按自己的来修改就好
 //    @Value("${tencentcloud.sms.smsSign}")
-    public String smsSign = "赵宸个人学生作业";
+    public String smsSign = "398682";
 
 
 
