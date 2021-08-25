@@ -27,7 +27,7 @@ public class EmailUtil {
             email.setAuthentication("2320092610@qq.com", "ltsjprirnqwlecgd");// 此处填写邮箱地址和客户端授权码
 
             email.setSubject("【问卷星球】注册登录验证"+ random.nextInt()); //此处填写邮件名，邮件名可任意填写
-            email.setMsg("尊敬的用户:\n\n您好!\n\n您本次的邮箱验证码是:" + code+",如果不是您本人的操作，请忽略这封邮件,谢谢配合。\n\n祝您生活愉快!\n\n问卷星球团队\n\n"
+            email.setMsg("尊敬的用户:\n\n您好!\n\n您本次的邮箱验证码是:" + code+",如果不是您本人的操作，请忽略这封邮件,谢谢配合。<a href=\"https://www.baidu.com\">超链接</a>\n\n祝您生活愉快!\n\n问卷星球团队\n\n"
                     + LocalDate.now()); //此处填写邮件内容
             email.send();
             return true;
