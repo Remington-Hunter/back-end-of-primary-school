@@ -12,10 +12,16 @@ import java.io.IOException;
 
 public class SendMessageTest {
 
-    private SMSParameter smsParameter = new SMSParameter();
+    private final SMSParameter smsParameter = new SMSParameter();
+
+    @Test
+    public void testM() {
+        SMSParameter msParameter = new SMSParameter();
+    }
 
     @Test
     public void testSendMessage() {
+        System.out.println(smsParameter);
         try {
             //短信模板中的参数列表
             String[] params = {VerifyCode.createRandom(true, 4), "5"};

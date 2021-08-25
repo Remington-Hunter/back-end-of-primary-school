@@ -1,12 +1,16 @@
 package summer.project.util.message;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+
+import java.util.Arrays;
 
 /**
  *  封装发送短信所需的参数
  */
 @Data
+@Slf4j
 public class SMSParameter {
 
 //    @Value("${tencentcloud.sms.secretId}")
@@ -15,16 +19,31 @@ public class SMSParameter {
 
     // 短信应用 SDK AppID，SDK AppID 以1400开头
     @Value("${tencentcloud.sms.appId}")
-    private int appId;
+    public int appId;
     // 短信应用SDK AppKey
     @Value("${tencentcloud.sms.appKey}")
-    private String appKey;
+    public String appKey;
     // 需要发送短信的手机号码，可以定义多个手机号码
-    private String[] phoneNumbers = {"15166680628","15295791959"};
+    public String[] phoneNumbers = {"15166680628","15295791959"};
     // 短信模板ID，需要在短信控制台中申请，我们查看自己的短信模板ID即可
     @Value("${tencentcloud.sms.templateId}")
-    private int templateId;
+    public int templateId;
     // 签名，签名参数使用的是`签名内容`，而不是`签名ID`，真实的签名需要在短信控制台申请，这里按自己的来修改就好
 //    @Value("${tencentcloud.sms.smsSign}")
-    private String smsSign = "赵宸个人学生作业";
+    public String smsSign = "赵宸个人学生作业";
+
+    public SMSParameter() {
+        System.out.println(this);
+    }
+
+    @Override
+    public String toString() {
+        return "SMSParameter{" +
+                "appId=" + appId +
+                ", appKey='" + appKey + '\'' +
+                ", phoneNumbers=" + Arrays.toString(phoneNumbers) +
+                ", templateId=" + templateId +
+                ", smsSign='" + smsSign + '\'' +
+                '}';
+    }
 }
