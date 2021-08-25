@@ -57,6 +57,8 @@ public class Questionnaire implements Serializable {
 
     private Integer deleted;
 
+    private Integer canSee;
+
     @TableField("`limit`")
     private Long limit;
 
@@ -79,7 +81,8 @@ public class Questionnaire implements Serializable {
                          LocalDateTime endTime,
                          Long needNum,
                          Long limit,
-                         Integer type) {
+                         Integer type,
+                         Integer canSee) {
         this.userId = userId;
         this.title = title;
         this.description = description;
@@ -89,5 +92,6 @@ public class Questionnaire implements Serializable {
         this.needNum = needNum;
         this.limit = limit;
         this.type = type;
+        this.canSee = canSee;
     }
 }

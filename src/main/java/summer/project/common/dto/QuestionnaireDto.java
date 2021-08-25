@@ -35,6 +35,8 @@ public class QuestionnaireDto {
 
     List<QuestionDto> questionList;
 
+    private Integer canSee;
+
     @NotNull(message = "问卷类型不能为空")
     private Integer type;
 }

@@ -2,18 +2,13 @@ package summer.project.controller;
 
 
 import cn.hutool.core.lang.Assert;
-import cn.hutool.core.map.MapBuilder;
 import cn.hutool.crypto.SecureUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import io.swagger.annotations.*;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.crypto.hash.Hash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,7 +34,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -97,7 +91,8 @@ public class QuestionnaireController {
                     questionnaireDto.getEndTime(),
                     questionnaireDto.getNeedNum(),
                     questionnaireDto.getLimit(),
-                    questionnaireDto.getType()
+                    questionnaireDto.getType(),
+                    questionnaireDto.getCanSee()
             );
 
             questionnaireService.save(questionnaire);
@@ -120,6 +115,7 @@ public class QuestionnaireController {
                             .set(Questionnaire::getLimit, questionnaireDto.getLimit())
                             .set(Questionnaire::getType, questionnaireDto.getType())
                             .set(Questionnaire::getDescription, questionnaireDto.getDescription())
+                            .set(Questionnaire::getCanSee, questionnaireDto.getCanSee())
                             .eq(Questionnaire::getId, questionnaireDto.getId())
             );
 
@@ -452,14 +448,30 @@ public class QuestionnaireController {
         Questionnaire questionnaire = questionnaireService.getById(questionnaireDto.getId());
         Assert.notNull(questionnaire, "不存在该问卷。");
         Assert.isTrue(questionnaire.getUserId().equals(ShiroUtil.getProfile().getId()), "无权限修改他人问卷。");
-        questionnaire.setId(questionnaireDto.getId());
-        questionnaire.setCreateTime(LocalDateTime.now());
-        questionnaire.setTitle(questionnaireDto.getTitle());
-        questionnaire.setStartTime(questionnaireDto.getStartTime());
-        questionnaire.setEndTime(questionnaireDto.getEndTime());
-        questionnaire.setNeedNum(questionnaireDto.getNeedNum());
-        questionnaire.setLimit(questionnaire.getLimit());
-        questionnaireService.updateById(questionnaire);
+//        questionnaire.setId(questionnaireDto.getId());
+//        questionnaire.setCreateTime(LocalDateTime.now());
+//        questionnaire.setTitle(questionnaireDto.getTitle());
+//        questionnaire.setStartTime(questionnaireDto.getStartTime());
+//        questionnaire.setEndTime(questionnaireDto.getEndTime());
+//        questionnaire.setNeedNum(questionnaireDto.getNeedNum());
+//        questionnaire.setLimit(questionnaire.getLimit());
+//        questionnaire.setCanSee(questionnaire.getCanSee());
+//        questionnaireService.updateById(questionnaire);
+
+        questionnaireMapper.update(
+                null,
+                Wrappers.<Questionnaire>lambdaUpdate()
+                        .set(Questionnaire::getCreateTime, LocalDateTime.now())
+                        .set(Questionnaire::getTitle, questionnaireDto.getTitle())
+                        .set(Questionnaire::getStartTime, questionnaireDto.getStartTime())
+                        .set(Questionnaire::getEndTime, questionnaireDto.getEndTime())
+                        .set(Questionnaire::getNeedNum, questionnaireDto.getNeedNum())
+                        .set(Questionnaire::getLimit, questionnaireDto.getLimit())
+                        .set(Questionnaire::getType, questionnaireDto.getType())
+                        .set(Questionnaire::getDescription, questionnaireDto.getDescription())
+                        .set(Questionnaire::getCanSee, questionnaireDto.getCanSee())
+                        .eq(Questionnaire::getId, questionnaireDto.getId())
+        );
         List<Question> questionList = questionService.list(new QueryWrapper<Question>().eq("questionnaire", questionnaire.getId()));
 
 
