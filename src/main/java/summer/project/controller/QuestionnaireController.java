@@ -381,6 +381,7 @@ public class QuestionnaireController {
         Questionnaire newQuestionnaire = null;
 //        try {
         newQuestionnaire = (Questionnaire) CopyUtil.deepCopy(questionnaire);
+        newQuestionnaire.setTitle(questionnaire.getTitle()+"_副本");
         newQuestionnaire.setAnswerNum(0L);
         newQuestionnaire.setPreparing(1);
         newQuestionnaire.setUsing(0);
@@ -610,6 +611,7 @@ public class QuestionnaireController {
         Questionnaire newQuestionnaire = null;
 //        try {
         newQuestionnaire = (Questionnaire) CopyUtil.deepCopy(questionnaire);
+        newQuestionnaire.setTitle(questionnaire.getTitle()+"_副本");
         newQuestionnaire.setAnswerNum(0L);
         newQuestionnaire.setPreparing(1);
         newQuestionnaire.setUsing(0);
