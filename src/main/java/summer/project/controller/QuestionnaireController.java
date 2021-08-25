@@ -519,12 +519,12 @@ public class QuestionnaireController {
                 Question question = questionService.getById(questionDto.getId());
                 Assert.notNull(question, "题目不存在");
                 question.setAnswer(questionDto.getAnswer());
-                question.setComment(question.getComment());
-                question.setType(question.getType());
-                question.setContent(question.getContent());
-                question.setNumber(question.getNumber());
-                question.setPoint(question.getPoint());
-                question.setRequired(question.getRequired());
+                question.setComment(questionDto.getComment());
+                question.setType(questionDto.getType());
+                question.setContent(questionDto.getContent());
+                question.setNumber(questionDto.getNumber());
+                question.setPoint(questionDto.getPoint());
+                question.setRequired(questionDto.getRequired());
 
                 questionService.updateById(question);
 
