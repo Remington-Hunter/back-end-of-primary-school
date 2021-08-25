@@ -4,7 +4,7 @@ spring:
   datasource:
     username: root
     password: Zcd_13325015108
-#    password: 123456
+    #    password: 123456
     url: jdbc:mysql://localhost:3306/summer2021?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
@@ -63,7 +63,7 @@ server:
 #spring.redis.pool.max-active=8
 #spring.redis.pool.max-wait=-1
 storage:
-#  pathname: /home/ubuntu/Project/summer2021/sestore/
+  #  pathname: /home/ubuntu/Project/summer2021/sestore/
   pathname: /Users/jerryzhao/Desktop/sestore
 mconfig:
   swagger-ui-open: true
@@ -74,3 +74,12 @@ swagger:
   application-name: ${spring.application.name}
   application-version: 1.0
   application-description: summer2021问卷星球
+
+# 腾讯云短信平台
+tencentcloud:
+  sms:
+    secretId: AKIDPcYEdmeFZcOt75mCLDo8BxUllVzC8nBJ
+    secretKey: sTmqc8MK2TdW9VbPxEExQcXBYfU2JK4W
+    appId: 1400563483
+    smsSign: 【赵宸个人学生作业】
+    templateId: 1091392
