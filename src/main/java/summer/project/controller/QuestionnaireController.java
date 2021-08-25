@@ -381,6 +381,7 @@ public class QuestionnaireController {
         Questionnaire newQuestionnaire = null;
 //        try {
         newQuestionnaire = (Questionnaire) CopyUtil.deepCopy(questionnaire);
+        newQuestionnaire.setTitle(questionnaire.getTitle()+"_副本");
         newQuestionnaire.setAnswerNum(0L);
         newQuestionnaire.setPreparing(1);
         newQuestionnaire.setUsing(0);
@@ -610,6 +611,7 @@ public class QuestionnaireController {
         Questionnaire newQuestionnaire = null;
 //        try {
         newQuestionnaire = (Questionnaire) CopyUtil.deepCopy(questionnaire);
+        newQuestionnaire.setTitle(questionnaire.getTitle()+"_副本");
         newQuestionnaire.setAnswerNum(0L);
         newQuestionnaire.setPreparing(1);
         newQuestionnaire.setUsing(0);
@@ -636,7 +638,14 @@ public class QuestionnaireController {
 //            transactionManager.rollback(status);
 //        }
 
-        assert newQuestionnaire != null;
         return Result.succeed(201, "操作成功。", newQuestionnaire.getId());
+    }
+
+    @RequiresAuthentication
+    @ApiOperation(value = "清空回收站")
+    @PostMapping("/clear_trashcan")
+    public Result clearTrashcan() {
+        questionnaireService.remove(new QueryWrapper<Questionnaire>().eq("user_id", ShiroUtil.getProfile().getId()));
+        return Result.succeed("回收站已清空。");
     }
 }

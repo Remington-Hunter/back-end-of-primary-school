@@ -2,6 +2,7 @@ package summer.project.controller;
 
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import summer.project.common.lang.Result;
@@ -13,7 +14,7 @@ import java.io.*;
 @RestController
 @Slf4j
 public class DownloadController {
-    @org.springframework.beans.factory.annotation.Value("${storage.pathname}")
+    @Value("${storage.pathname}")
     private String pathname;
 
     @RequestMapping("/getIcon")
