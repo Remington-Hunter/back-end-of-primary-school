@@ -496,6 +496,7 @@ public class QuestionnaireController {
             if (questionDto.getId() == null) {
                 // 新问题
                 Question question = new Question(
+                        questionnaireDto.getId(),
                         questionDto.getContent(),
                         questionDto.getAnswer(),
                         questionDto.getPoint(),
@@ -507,6 +508,7 @@ public class QuestionnaireController {
                 questionService.save(question);
                 for (OptionDto optionDto : questionDto.getOptionList()) {
                     Option option = new Option(
+                            question.getId(),
                             optionDto.getContent(),
                             optionDto.getLimit(),
                             optionDto.getNumber(),
