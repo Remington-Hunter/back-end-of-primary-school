@@ -597,6 +597,9 @@ public class QuestionnaireController {
             }
             optionService.updateBatchById(optionList);
         }
+        questionnaire.setAnswerNum(0L);
+        questionnaireService.updateById(questionnaire);
+
 
 //            transactionManager.commit(status);
 //        } catch (Exception e) {
