@@ -33,5 +33,5 @@ public class AnswerList implements Serializable {
     @Version // 这个注解是关键
     private Integer version;
 
-
+    private Long questionnaire;
 }

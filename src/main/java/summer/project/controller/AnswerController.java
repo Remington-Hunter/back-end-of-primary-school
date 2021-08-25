@@ -21,14 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 import summer.project.common.dto.AnswerDto;
 import summer.project.common.dto.AnswerListDto;
 import summer.project.common.lang.Result;
-import summer.project.entity.Answer;
-import summer.project.entity.Option;
-import summer.project.entity.Question;
-import summer.project.entity.Questionnaire;
-import summer.project.service.AnswerService;
-import summer.project.service.OptionService;
-import summer.project.service.QuestionService;
-import summer.project.service.QuestionnaireService;
+import summer.project.entity.*;
+import summer.project.service.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -47,6 +41,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/answer")
 public class AnswerController {
+
+    @Autowired
+    AnswerListService answerListService;
 
     @Autowired
     QuestionnaireService questionnaireService;
@@ -118,76 +115,81 @@ public class AnswerController {
 
 
 //        try {
-            Questionnaire questionnaire = questionnaireService.getById(questionnaireId);
-            Assert.notNull(questionnaire, "不存在该问卷");
+        Questionnaire questionnaire = questionnaireService.getById(questionnaireId);
+        Assert.notNull(questionnaire, "不存在该问卷");
 
-            LocalDateTime now = LocalDateTime.now();
-            if (questionnaire.getEndTime() != null && now.isAfter(questionnaire.getEndTime().plusSeconds(5L))) {
-                return Result.fail(400, "问卷提交已截止。", null);
-            }
+        AnswerList answerList = new AnswerList();
+        answerList.setQuestionnaire(questionnaire.getId());
+        answerListService.save(answerList);
 
-            if (questionnaire.getStartTime() != null && now.isBefore(questionnaire.getStartTime())) {
-                return Result.fail(400, "问卷未开始。", null);
-            }
+        LocalDateTime now = LocalDateTime.now();
+        if (questionnaire.getEndTime() != null && now.isAfter(questionnaire.getEndTime().plusSeconds(5L))) {
+            return Result.fail(400, "问卷提交已截止。", null);
+        }
 
-            if (questionnaire.getUsing() != 1) {
-                return Result.fail(400, "当前问卷已经停止投放。", null);
-            }
+        if (questionnaire.getStartTime() != null && now.isBefore(questionnaire.getStartTime())) {
+            return Result.fail(400, "问卷未开始。", null);
+        }
 
-            if (questionnaire.getLimit() >= 0 && questionnaire.getLimit() < questionnaire.getAnswerNum()) {
-                return Result.fail(400, "问卷填报人数已满。", null);
-            }
+        if (questionnaire.getUsing() != 1) {
+            return Result.fail(400, "当前问卷已经停止投放。", null);
+        }
+
+        if (questionnaire.getLimit() >= 0 && questionnaire.getLimit() < questionnaire.getAnswerNum()) {
+            return Result.fail(400, "问卷填报人数已满。", null);
+        }
 
 
-            for (AnswerDto answerDto : answerListDto.getAnswerDtoList()) {
-                Long questionId = answerDto.getQuestionId();
-                Question question = questionService.getById(questionId);
-                Assert.notNull(question, "问题不存在");
-                Answer answer = new Answer();
-                answer.setContent(answerDto.getContent());
-                answer.setNumber(answerDto.getNumber());
-                answer.setQuestionId(answerDto.getQuestionId());
+        for (AnswerDto answerDto : answerListDto.getAnswerDtoList()) {
+            Long questionId = answerDto.getQuestionId();
+            Question question = questionService.getById(questionId);
+            Assert.notNull(question, "问题不存在");
+            Answer answer = new Answer();
+            answer.setContent(answerDto.getContent());
+            answer.setNumber(answerDto.getNumber());
+            answer.setQuestionId(answerDto.getQuestionId());
+            answer.setAnswerListId(answerList.getId());
 
-                List<Option> optionList = optionService.list(new QueryWrapper<Option>().eq("question_id", question.getId()));
+            List<Option> optionList = optionService.list(new QueryWrapper<Option>().eq("question_id", question.getId()));
 
-                switch (question.getType()) {
-                    case 6:
-                    case 7:
+            switch (question.getType()) {
+                case 6:
+                case 7:
+                    for (Option option : optionList) {
+                        if (option.getNumber().equals(answerDto.getNumber()) && option.getLimit() <= option.getAnswerNum()) {
+                            return Result.fail(400, "抱歉，第" + questionService.getById(answerDto.getQuestionId()).getNumber() + "题的选择人数已满。", null);
+                        }
+                    }
+                case 0:
+                case 1:
+                case 3:
+                case 4:
+                case 8:
+                case 9:
+                case 10:
+                case 11:
+                    for (Character ch : answerDto.getNumber().toCharArray()) {
                         for (Option option : optionList) {
-                            if (option.getNumber().equals(answerDto.getNumber()) && option.getLimit() <= option.getAnswerNum()) {
-                                return Result.fail(400, "抱歉，第" + questionService.getById(answerDto.getQuestionId()).getNumber() + "题的选择人数已满。", null);
+                            if (option.getNumber().charAt(0) == ch) {
+                                option.setAnswerNum(option.getAnswerNum() + 1);
+                                optionService.updateById(option);
                             }
                         }
-                    case 0:
-                    case 1:
-                    case 3:
-                    case 4:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                        for (Character ch : answerDto.getNumber().toCharArray()) {
-                            for (Option option : optionList) {
-                                if (option.getNumber().charAt(0) == ch) {
-                                    option.setAnswerNum(option.getAnswerNum() + 1);
-                                    optionService.updateById(option);
-                                }
-                            }
-                        }
-                        break;
+                    }
+                    break;
 
-
-                }
-
-                answerService.save(answer);
 
             }
+
+            answerService.save(answer);
+
+        }
 //            transactionManager.commit(status);
 //        } catch (Exception e) {
 //            transactionManager.rollback(status);
 //            throw e;
 //        }
-        questionnaire.setAnswerNum(questionnaire.getAnswerNum()+1);
+        questionnaire.setAnswerNum(questionnaire.getAnswerNum() + 1);
         questionnaireService.updateById(questionnaire);
 
 
