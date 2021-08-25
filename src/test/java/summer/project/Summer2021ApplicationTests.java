@@ -15,7 +15,7 @@ class Summer2021ApplicationTests {
 
     @Test
     void SendEmailTest() {
-        EmailUtil.sendEmail("zc2320092610@163.com", "4312");
+        EmailUtil.sendEmail("2320092610@qq.com", "4312");
     }
 
 }

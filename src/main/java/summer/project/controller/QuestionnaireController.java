@@ -483,7 +483,10 @@ public class QuestionnaireController {
             answerService.remove(new QueryWrapper<Answer>().eq("question_id", question.getId()));
         }
 
-        questionService.removeByIds(questionList);
+        if (questionList.size() != 0) {
+            questionService.removeByIds(questionList);
+        }
+
         for (QuestionDto questionDto : questionnaireDto.getQuestionList()) {
 
             if (questionDto.getId() == null) {
@@ -531,9 +534,15 @@ public class QuestionnaireController {
                     answerList.removeIf(answer -> answer.getNumber() != null && answer.getNumber().equals(option.getNumber()));
                 }
 
-                answerService.removeByIds(answerList);
+                if (answerList.size() != 0) {
+                    answerService.removeByIds(answerList);
+                }
 
-                optionService.removeByIds(optionList);
+
+                if (answerList.size() != 0) {
+                    optionService.removeByIds(optionList);
+                }
+
 
                 for (OptionDto optionDto : questionDto.getOptionList()) {
 
