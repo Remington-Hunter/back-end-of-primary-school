@@ -526,7 +526,7 @@ public class QuestionnaireController {
                 question.setPoint(question.getPoint());
                 question.setRequired(question.getRequired());
 
-                questionService.save(question);
+                questionService.updateById(question);
 
                 List<Option> optionList = optionService.list(new QueryWrapper<Option>().eq("question_id", question.getId()));
                 for (OptionDto optionDto : questionDto.getOptionList()) {
