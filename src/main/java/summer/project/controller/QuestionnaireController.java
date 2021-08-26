@@ -690,7 +690,12 @@ public class QuestionnaireController {
 
         if (questionnaire.getDisorder() == 1) {
             Collections.shuffle(questions);
+
+            for (int i = 0; i < questions.size(); i++) {
+                ((Question) questions.get(i).get("question")).setNumber((long) i);
+            }
         }
+
 
         HashMap<String, Object> result = new HashMap<>();
         result.put("questionnaire", questionnaire);
