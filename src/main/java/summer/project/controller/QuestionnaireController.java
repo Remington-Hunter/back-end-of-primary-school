@@ -376,6 +376,7 @@ public class QuestionnaireController {
                             .set(Questionnaire::getType, questionnaireDto.getType())
                             .set(Questionnaire::getDescription, questionnaireDto.getDescription())
                             .set(Questionnaire::getCanSee, questionnaireDto.getCanSee())
+                            .set(Questionnaire::getDisorder, questionnaireDto.getDisorder())
                             .eq(Questionnaire::getId, questionnaireDto.getId())
             );
 
