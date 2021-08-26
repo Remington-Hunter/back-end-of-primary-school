@@ -255,39 +255,39 @@ public class QuestionnaireController {
                 optionService.save(option10);
 
                 // 5
-                    Question question6 = new Question();
-                    question6.setRequired(1);
-                    question6.setNumber(5L);
-                    question6.setContent("近14天您是否接触新冠肺炎确诊或疑似患者？");
-                    question6.setQuestionnaire(questionnaire.getId());
-                    question6.setType(0);
+                Question question6 = new Question();
+                question6.setRequired(1);
+                question6.setNumber(5L);
+                question6.setContent("近14天您是否接触新冠肺炎确诊或疑似患者？");
+                question6.setQuestionnaire(questionnaire.getId());
+                question6.setType(0);
 
-                    Option option4 = new Option();
-                    option4.setNumber("0");
-                    option4.setQuestionId(question6.getId());
-                    option4.setContent("是");
-                    optionService.save(option4);
+                Option option4 = new Option();
+                option4.setNumber("0");
+                option4.setQuestionId(question6.getId());
+                option4.setContent("是");
+                optionService.save(option4);
 
-                    Option option5 = new Option();
-                    option5.setNumber("1");
-                    option5.setQuestionId(question6.getId());
-                    option5.setContent("否");
-                    optionService.save(option4);
+                Option option5 = new Option();
+                option5.setNumber("1");
+                option5.setQuestionId(question6.getId());
+                option5.setContent("否");
+                optionService.save(option4);
 
-                    Option option6 = new Option();
-                    option6.setNumber("2");
-                    option6.setQuestionId(question6.getId());
-                    option6.setContent("不确定");
-                    optionService.save(option4);
+                Option option6 = new Option();
+                option6.setNumber("2");
+                option6.setQuestionId(question6.getId());
+                option6.setContent("不确定");
+                optionService.save(option4);
 
-                    // 6
-                    Question question7 = new Question();
-                    question7.setQuestionnaire(questionnaire.getId());
-                    question7.setRequired(1);
-                    question7.setNumber(6L);
-                    question7.setContent("当前健康状况（可多选）");
-                    question7.setType(1);
-                    questionService.save(question7);
+                // 6
+                Question question7 = new Question();
+                question7.setQuestionnaire(questionnaire.getId());
+                question7.setRequired(1);
+                question7.setNumber(6L);
+                question7.setContent("当前健康状况（可多选）");
+                question7.setType(1);
+                questionService.save(question7);
 
                 {
                     Option option7 = new Option();
