@@ -736,7 +736,7 @@ public class QuestionnaireController {
     @ApiOperation(value = "清空回收站")
     @PostMapping("/clear_trashcan")
     public Result clearTrashcan() {
-        questionnaireService.remove(new QueryWrapper<Questionnaire>().eq("user_id", ShiroUtil.getProfile().getId()));
+        questionnaireService.remove(new QueryWrapper<Questionnaire>().eq("user_id", ShiroUtil.getProfile().getId()).eq("deleted", 1));
         return Result.succeed("回收站已清空。");
     }
 }
