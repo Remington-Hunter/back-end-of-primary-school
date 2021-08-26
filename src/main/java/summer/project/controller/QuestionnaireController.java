@@ -206,7 +206,7 @@ public class QuestionnaireController {
                     question7.setRequired(1);
                     question7.setNumber(4L);
                     question7.setContent("当前健康状况（可多选）");
-                    question7.setType(2);
+                    question7.setType(1);
                     questionService.save(question7);
 
                 {
@@ -273,49 +273,49 @@ public class QuestionnaireController {
                 {
                     Option option7 = new Option();
                     option7.setNumber("0");
-                    option7.setQuestionId(question7.getId());
+                    option7.setQuestionId(question8.getId());
                     option7.setContent("35.5°C以下");
                     optionService.save(option7);
                 }
                 {
                     Option option7 = new Option();
                     option7.setNumber("1");
-                    option7.setQuestionId(question7.getId());
+                    option7.setQuestionId(question8.getId());
                     option7.setContent("35.5-36°C");
                     optionService.save(option7);
                 }
                 {
                     Option option7 = new Option();
                     option7.setNumber("2");
-                    option7.setQuestionId(question7.getId());
+                    option7.setQuestionId(question8.getId());
                     option7.setContent("36-36.5°C");
                     optionService.save(option7);
                 }
                 {
                     Option option7 = new Option();
                     option7.setNumber("3");
-                    option7.setQuestionId(question7.getId());
+                    option7.setQuestionId(question8.getId());
                     option7.setContent("36.5-37°C");
                     optionService.save(option7);
                 }
                 {
                     Option option7 = new Option();
                     option7.setNumber("4");
-                    option7.setQuestionId(question7.getId());
+                    option7.setQuestionId(question8.getId());
                     option7.setContent("37-37.5°C");
                     optionService.save(option7);
                 }
                 {
                     Option option7 = new Option();
                     option7.setNumber("5");
-                    option7.setQuestionId(question7.getId());
+                    option7.setQuestionId(question8.getId());
                     option7.setContent("37.5-38°C");
                     optionService.save(option7);
                 }
                 {
                     Option option7 = new Option();
                     option7.setNumber("6");
-                    option7.setQuestionId(question7.getId());
+                    option7.setQuestionId(question8.getId());
                     option7.setContent("38°C以上");
                     optionService.save(option7);
                 }
