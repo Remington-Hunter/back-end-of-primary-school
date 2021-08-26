@@ -101,6 +101,7 @@ public class QuestionnaireController {
                     Question question = new Question();
                     question.setQuestionnaire(questionnaire.getId());
                     question.setNumber(1L);
+                    question.setRequired(1);
                     question.setType(10);
                     questionService.save(question);
                     Option option = new Option();
@@ -116,6 +117,7 @@ public class QuestionnaireController {
                     break;
                 case 2:
                     Question question1 = new Question();
+                    question1.setRequired(1);
                     question1.setNumber(1L);
                     question1.setContent("请输入您的姓名：");
                     question1.setType(2);
@@ -123,6 +125,7 @@ public class QuestionnaireController {
                     questionService.save(question1);
 
                     Question question2 = new Question();
+                    question2.setRequired(1);
                     question2.setNumber(2L);
                     question2.setContent("请输入您的手机号：");
                     question2.setType(2);
@@ -133,6 +136,7 @@ public class QuestionnaireController {
                     Question question3 = new Question();
                     question3.setQuestionnaire(questionnaire.getId());
                     question3.setNumber(3L);
+                    question3.setRequired(1);
                     question3.setType(6);
                     questionService.save(question3);
                     Option option2 = new Option();
@@ -672,7 +676,9 @@ public class QuestionnaireController {
             for (Option option : optionList) {
                 option.setAnswerNum(0L);
             }
-            optionService.updateBatchById(optionList);
+            if (optionList.size() != 0) {
+                optionService.updateBatchById(optionList);
+            }
         }
         questionnaire.setAnswerNum(0L);
         questionnaireService.updateById(questionnaire);
