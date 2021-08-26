@@ -39,4 +39,6 @@ public class QuestionnaireDto {
 
     @NotNull(message = "问卷类型不能为空")
     private Integer type;
+
+    private Integer disorder;
 }

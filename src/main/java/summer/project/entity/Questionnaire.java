@@ -72,6 +72,8 @@ public class Questionnaire implements Serializable {
     @Version // 这个注解是关键
     private Integer version;
 
+    private Integer disorder;
+
 
     public Questionnaire(Long userId,
                          String title,
@@ -82,7 +84,8 @@ public class Questionnaire implements Serializable {
                          Long needNum,
                          Long limit,
                          Integer type,
-                         Integer canSee) {
+                         Integer canSee,
+                         Integer disorder) {
         this.userId = userId;
         this.title = title;
         this.description = description;
@@ -93,5 +96,6 @@ public class Questionnaire implements Serializable {
         this.limit = limit;
         this.type = type;
         this.canSee = canSee;
+        this.disorder = disorder;
     }
 }
