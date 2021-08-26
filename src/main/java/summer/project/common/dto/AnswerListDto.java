@@ -17,5 +17,6 @@ public class AnswerListDto {
 
     List<AnswerDto> answerDtoList;
 
+    Integer point;
 
 }
