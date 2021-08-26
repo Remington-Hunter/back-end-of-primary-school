@@ -158,6 +158,7 @@ public class AnswerController {
 
         AnswerList answerList = new AnswerList();
         answerList.setQuestionnaire(questionnaire.getId());
+        answerList.setPoint(answerListDto.getPoint());
         answerListService.save(answerList);
 
         LocalDateTime now = LocalDateTime.now();

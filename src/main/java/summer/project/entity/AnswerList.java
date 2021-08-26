@@ -34,4 +34,6 @@ public class AnswerList implements Serializable {
     private Integer version;
 
     private Long questionnaire;
+
+    private Integer point;
 }
