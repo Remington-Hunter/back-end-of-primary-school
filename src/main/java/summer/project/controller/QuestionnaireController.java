@@ -101,6 +101,7 @@ public class QuestionnaireController {
                     Question question = new Question();
                     question.setQuestionnaire(questionnaire.getId());
                     question.setNumber(1L);
+                    question.setRequired(1);
                     question.setType(10);
                     questionService.save(question);
                     Option option = new Option();
@@ -116,6 +117,7 @@ public class QuestionnaireController {
                     break;
                 case 2:
                     Question question1 = new Question();
+                    question1.setRequired(1);
                     question1.setNumber(1L);
                     question1.setContent("请输入您的姓名：");
                     question1.setType(2);
@@ -123,6 +125,7 @@ public class QuestionnaireController {
                     questionService.save(question1);
 
                     Question question2 = new Question();
+                    question2.setRequired(1);
                     question2.setNumber(2L);
                     question2.setContent("请输入您的手机号：");
                     question2.setType(2);
@@ -133,6 +136,7 @@ public class QuestionnaireController {
                     Question question3 = new Question();
                     question3.setQuestionnaire(questionnaire.getId());
                     question3.setNumber(3L);
+                    question3.setRequired(1);
                     question3.setType(6);
                     questionService.save(question3);
                     Option option2 = new Option();
@@ -147,7 +151,95 @@ public class QuestionnaireController {
                     option3.setQuestionId(question3.getId());
                     option3.setLimit(10L);
                     optionService.save(option3);
+                case 4:
+                    // 1
+                    questionnaire.setTitle("学生疫情打卡问卷");
+                    Question question4 = new Question();
+                    question4.setRequired(1);
+                    question4.setNumber(1L);
+                    question4.setContent("请输入您的姓名：");
+                    question4.setType(2);
+                    question4.setQuestionnaire(questionnaire.getId());
+                    questionService.save(question4);
 
+                    // 2
+                    Question question5 = new Question();
+                    question5.setRequired(1);
+                    question5.setNumber(2L);
+                    question5.setContent("请输入您的学号：");
+                    question5.setType(2);
+                    question5.setQuestionnaire(questionnaire.getId());
+                    questionService.save(question5);
+
+                    // 3
+                    Question question6 = new Question();
+                    question6.setRequired(1);
+                    question6.setNumber(3L);
+                    question6.setContent("近14天您是否接触新冠肺炎确诊或疑似患者？");
+                    question6.setType(0);
+
+                    Option option4 = new Option();
+                    option4.setNumber("0");
+                    option4.setQuestionId(question6.getId());
+                    option4.setContent("是");
+                    optionService.save(option4);
+
+                    Option option5 = new Option();
+                    option5.setNumber("1");
+                    option5.setQuestionId(question6.getId());
+                    option5.setContent("是");
+                    optionService.save(option4);
+
+                    Option option6 = new Option();
+                    option6.setNumber("2");
+                    option6.setQuestionId(question6.getId());
+                    option6.setContent("不确定");
+                    optionService.save(option4);
+
+                    // 4
+                    Question question7 = new Question();
+                    question7.setRequired(1);
+                    question7.setNumber(4L);
+                    question7.setContent("当前健康状况（可多选）");
+                    questionService.save(question7);
+
+                {
+                    Option option7 = new Option();
+                    option7.setNumber("0");
+                    option7.setQuestionId(question7.getId());
+                    option7.setContent("没有出现症状");
+                    optionService.save(option7);
+                }
+
+                {
+                    Option option7 = new Option();
+                    option7.setNumber("1");
+                    option7.setQuestionId(question7.getId());
+                    option7.setContent("感冒症状：发力、咳嗽、发烧、肌肉痛、头痛");
+                    optionService.save(option7);
+                }
+
+                {
+                    Option option7 = new Option();
+                    option7.setNumber("2");
+                    option7.setQuestionId(question7.getId());
+                    option7.setContent("喘憋、呼吸急促");
+                    optionService.save(option7);
+                }
+                {
+                    Option option7 = new Option();
+                    option7.setNumber("3");
+                    option7.setQuestionId(question7.getId());
+                    option7.setContent("恶心呕吐、腹泻");
+                    optionService.save(option7);
+                }
+                {
+                    Option option7 = new Option();
+                    option7.setNumber("4");
+                    option7.setQuestionId(question7.getId());
+                    option7.setContent("心慌、胸闷");
+                    optionService.save(option7);
+                }
 
             }
 
@@ -672,7 +764,9 @@ public class QuestionnaireController {
             for (Option option : optionList) {
                 option.setAnswerNum(0L);
             }
-            optionService.updateBatchById(optionList);
+            if (optionList.size() != 0) {
+                optionService.updateBatchById(optionList);
+            }
         }
         questionnaire.setAnswerNum(0L);
         questionnaireService.updateById(questionnaire);
