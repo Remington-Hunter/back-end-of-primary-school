@@ -50,6 +50,7 @@ public class Question implements Serializable {
      * 12-考试单选
      * 13-考试多选
      * 14-考试填空
+     * 15-定位题
      */
     private Integer type;
 
