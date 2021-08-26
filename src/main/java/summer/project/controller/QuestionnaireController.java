@@ -155,6 +155,8 @@ public class QuestionnaireController {
                 case 4:
                     // 1
                     questionnaire.setTitle("学生疫情打卡问卷");
+                    questionnaire.setDescription("");
+                    questionnaireService.updateById(questionnaire);
                     Question question4 = new Question();
                     question4.setRequired(1);
                     question4.setNumber(1L);
@@ -177,6 +179,7 @@ public class QuestionnaireController {
                     question6.setRequired(1);
                     question6.setNumber(3L);
                     question6.setContent("近14天您是否接触新冠肺炎确诊或疑似患者？");
+                    question6.setQuestionnaire(questionnaire.getId());
                     question6.setType(0);
 
                     Option option4 = new Option();
@@ -199,6 +202,7 @@ public class QuestionnaireController {
 
                     // 4
                     Question question7 = new Question();
+                    question7.setQuestionnaire(questionnaire.getId());
                     question7.setRequired(1);
                     question7.setNumber(4L);
                     question7.setContent("当前健康状况（可多选）");
@@ -262,6 +266,7 @@ public class QuestionnaireController {
                 question8.setRequired(1);
                 question8.setNumber(5L);
                 question8.setType(0);
+                question8.setQuestionnaire(questionnaire.getId());
                 question8.setContent("您今天的体温是？");
                 questionService.save(question8);
 
@@ -319,6 +324,7 @@ public class QuestionnaireController {
                 Question question9 = new Question();
                 question9.setType(15);
                 question9.setContent("您当前所处位置");
+                question9.setQuestionnaire(questionnaire.getId());
                 question9.setRequired(1);
 
                 break;
@@ -373,7 +379,8 @@ public class QuestionnaireController {
                     questionDto.getType(),
                     questionDto.getNumber(),
                     questionDto.getRequired(),
-                    questionDto.getComment()
+                    questionDto.getComment(),
+                    questionDto.getAnalysis()
             );
             questionService.save(question);
             for (OptionDto optionDto : questionDto.getOptionList()) {
@@ -731,7 +738,8 @@ public class QuestionnaireController {
                         questionDto.getType(),
                         questionDto.getNumber(),
                         questionDto.getRequired(),
-                        questionDto.getComment()
+                        questionDto.getComment(),
+                        questionDto.getAnalysis()
                 );
                 questionService.save(question);
                 for (OptionDto optionDto : questionDto.getOptionList()) {
@@ -749,12 +757,13 @@ public class QuestionnaireController {
                 Question question = questionService.getById(questionDto.getId());
                 Assert.notNull(question, "题目不存在");
                 question.setAnswer(questionDto.getAnswer());
-                question.setComment(question.getComment());
-                question.setType(question.getType());
-                question.setContent(question.getContent());
-                question.setNumber(question.getNumber());
-                question.setPoint(question.getPoint());
-                question.setRequired(question.getRequired());
+                question.setComment(questionDto.getComment());
+                question.setType(questionDto.getType());
+                question.setContent(questionDto.getContent());
+                question.setNumber(questionDto.getNumber());
+                question.setPoint(questionDto.getPoint());
+                question.setRequired(questionDto.getRequired());
+                question.setAnalysis(questionDto.getAnalysis());
 
                 questionService.updateById(question);
 

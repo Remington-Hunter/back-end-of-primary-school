@@ -67,6 +67,8 @@ public class Question implements Serializable {
     @Version // 这个注解是关键
     private Integer version;
 
+    private String analysis;
+
     public Question(String content, String answer, Long point, Integer type, Long number, Integer required, String comment) {
         this.content = content;
         this.answer = answer;
@@ -77,7 +79,7 @@ public class Question implements Serializable {
         this.comment = comment;
     }
 
-    public Question(Long questionnaireId, String content, String answer, Long point, Integer type, Long number, Integer required, String comment) {
+    public Question(Long questionnaireId, String content, String answer, Long point, Integer type, Long number, Integer required, String comment, String analysis) {
         this.questionnaire = questionnaireId;
         this.content = content;
         this.answer = answer;
@@ -86,5 +88,7 @@ public class Question implements Serializable {
         this.number = number;
         this.required = required;
         this.comment = comment;
+        this.analysis = analysis;
     }
+
 }
