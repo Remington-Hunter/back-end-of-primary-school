@@ -133,17 +133,19 @@ public class QuestionnaireController {
                     Question question3 = new Question();
                     question3.setQuestionnaire(questionnaire.getId());
                     question3.setNumber(3L);
-                    question3.setType(10);
+                    question3.setType(6);
                     questionService.save(question3);
                     Option option2 = new Option();
                     option2.setContent("选项一");
                     option2.setNumber("0");
                     option2.setQuestionId(question3.getId());
+                    option2.setLimit(10L);
                     optionService.save(option2);
                     Option option3 = new Option();
                     option3.setContent("选项二");
                     option3.setNumber("1");
                     option3.setQuestionId(question3.getId());
+                    option3.setLimit(10L);
                     optionService.save(option3);
 
 

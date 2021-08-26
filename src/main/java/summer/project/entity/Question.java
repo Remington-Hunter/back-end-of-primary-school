@@ -47,6 +47,9 @@ public class Question implements Serializable {
      * 9-评分题
      * 10-投票单选
      * 11-投票多选
+     * 12-考试单选
+     * 13-考试多选
+     * 14-考试填空
      */
     private Integer type;
 
