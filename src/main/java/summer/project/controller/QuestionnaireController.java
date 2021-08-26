@@ -240,6 +240,7 @@ public class QuestionnaireController {
                 question10.setContent("近14天您是否去过高风险地区？");
                 question10.setQuestionnaire(questionnaire.getId());
                 question10.setType(0);
+                questionService.save(question10);
 
                 Option option9 = new Option();
                 option9.setNumber("0");
@@ -348,6 +349,7 @@ public class QuestionnaireController {
                 question9.setQuestionnaire(questionnaire.getId());
                 question9.setRequired(1);
                 question9.setNumber(7L);
+                questionService.save(question9);
 
                 break;
 
