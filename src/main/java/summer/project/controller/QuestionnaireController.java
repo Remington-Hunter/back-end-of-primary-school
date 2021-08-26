@@ -96,6 +96,26 @@ public class QuestionnaireController {
             );
 
             questionnaireService.save(questionnaire);
+            switch (questionnaire.getType()) {
+                case 1:
+                case 2:
+                    Question question = new Question();
+                    question.setQuestionnaire(questionnaire.getId());
+                    question.setNumber(1L);
+                    question.setType(10);
+                    questionService.save(question);
+                    Option option = new Option();
+                    option.setContent("选项一");
+                    option.setNumber("0");
+                    option.setQuestionId(question.getId());
+                    optionService.save(option);
+                    Option option1 = new Option();
+                    option1.setContent("选项二");
+                    option1.setNumber("1");
+                    option1.setQuestionId(question.getId());
+                    optionService.save(option1);
+                    break;
+            }
 
 
         } else {
@@ -377,7 +397,7 @@ public class QuestionnaireController {
         Questionnaire newQuestionnaire;
 //        try {
         newQuestionnaire = (Questionnaire) CopyUtil.deepCopy(questionnaire);
-        newQuestionnaire.setTitle(questionnaire.getTitle()+"_副本");
+        newQuestionnaire.setTitle(questionnaire.getTitle() + "_副本");
         newQuestionnaire.setAnswerNum(0L);
         newQuestionnaire.setPreparing(1);
         newQuestionnaire.setUsing(0);
@@ -648,7 +668,7 @@ public class QuestionnaireController {
         Questionnaire newQuestionnaire = null;
 //        try {
         newQuestionnaire = (Questionnaire) CopyUtil.deepCopy(questionnaire);
-        newQuestionnaire.setTitle(questionnaire.getTitle()+"_副本");
+        newQuestionnaire.setTitle(questionnaire.getTitle() + "_副本");
         newQuestionnaire.setAnswerNum(0L);
         newQuestionnaire.setPreparing(1);
         newQuestionnaire.setUsing(0);
