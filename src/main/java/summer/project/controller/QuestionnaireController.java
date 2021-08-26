@@ -175,9 +175,88 @@ public class QuestionnaireController {
                     questionService.save(question5);
 
                     // 3
+                    Question question8 = new Question();
+                    question8.setRequired(1);
+                    question8.setNumber(3L);
+                    question8.setType(0);
+                    question8.setQuestionnaire(questionnaire.getId());
+                    question8.setContent("您今天的体温是？");
+                    questionService.save(question8);
+
+                {
+                    Option option7 = new Option();
+                    option7.setNumber("0");
+                    option7.setQuestionId(question8.getId());
+                    option7.setContent("35.5°C以下");
+                    optionService.save(option7);
+                }
+                {
+                    Option option7 = new Option();
+                    option7.setNumber("1");
+                    option7.setQuestionId(question8.getId());
+                    option7.setContent("35.5-36°C");
+                    optionService.save(option7);
+                }
+                {
+                    Option option7 = new Option();
+                    option7.setNumber("2");
+                    option7.setQuestionId(question8.getId());
+                    option7.setContent("36-36.5°C");
+                    optionService.save(option7);
+                }
+                {
+                    Option option7 = new Option();
+                    option7.setNumber("3");
+                    option7.setQuestionId(question8.getId());
+                    option7.setContent("36.5-37°C");
+                    optionService.save(option7);
+                }
+                {
+                    Option option7 = new Option();
+                    option7.setNumber("4");
+                    option7.setQuestionId(question8.getId());
+                    option7.setContent("37-37.5°C");
+                    optionService.save(option7);
+                }
+                {
+                    Option option7 = new Option();
+                    option7.setNumber("5");
+                    option7.setQuestionId(question8.getId());
+                    option7.setContent("37.5-38°C");
+                    optionService.save(option7);
+                }
+                {
+                    Option option7 = new Option();
+                    option7.setNumber("6");
+                    option7.setQuestionId(question8.getId());
+                    option7.setContent("38°C以上");
+                    optionService.save(option7);
+                }
+
+                // 4
+                Question question10 = new Question();
+                question10.setRequired(1);
+                question10.setNumber(4L);
+                question10.setContent("近14天您是否去过高风险地区？");
+                question10.setQuestionnaire(questionnaire.getId());
+                question10.setType(0);
+
+                Option option9 = new Option();
+                option9.setNumber("0");
+                option9.setQuestionId(question10.getId());
+                option9.setContent("是");
+                optionService.save(option9);
+
+                Option option10 = new Option();
+                option10.setNumber("1");
+                option10.setQuestionId(question10.getId());
+                option10.setContent("否");
+                optionService.save(option10);
+
+                // 5
                     Question question6 = new Question();
                     question6.setRequired(1);
-                    question6.setNumber(3L);
+                    question6.setNumber(5L);
                     question6.setContent("近14天您是否接触新冠肺炎确诊或疑似患者？");
                     question6.setQuestionnaire(questionnaire.getId());
                     question6.setType(0);
@@ -191,7 +270,7 @@ public class QuestionnaireController {
                     Option option5 = new Option();
                     option5.setNumber("1");
                     option5.setQuestionId(question6.getId());
-                    option5.setContent("是");
+                    option5.setContent("否");
                     optionService.save(option4);
 
                     Option option6 = new Option();
@@ -200,11 +279,11 @@ public class QuestionnaireController {
                     option6.setContent("不确定");
                     optionService.save(option4);
 
-                    // 4
+                    // 6
                     Question question7 = new Question();
                     question7.setQuestionnaire(questionnaire.getId());
                     question7.setRequired(1);
-                    question7.setNumber(4L);
+                    question7.setNumber(6L);
                     question7.setContent("当前健康状况（可多选）");
                     question7.setType(1);
                     questionService.save(question7);
@@ -261,71 +340,14 @@ public class QuestionnaireController {
                     optionService.save(option7);
                 }
 
-                // 5
-                Question question8 = new Question();
-                question8.setRequired(1);
-                question8.setNumber(5L);
-                question8.setType(0);
-                question8.setQuestionnaire(questionnaire.getId());
-                question8.setContent("您今天的体温是？");
-                questionService.save(question8);
 
-                {
-                    Option option7 = new Option();
-                    option7.setNumber("0");
-                    option7.setQuestionId(question8.getId());
-                    option7.setContent("35.5°C以下");
-                    optionService.save(option7);
-                }
-                {
-                    Option option7 = new Option();
-                    option7.setNumber("1");
-                    option7.setQuestionId(question8.getId());
-                    option7.setContent("35.5-36°C");
-                    optionService.save(option7);
-                }
-                {
-                    Option option7 = new Option();
-                    option7.setNumber("2");
-                    option7.setQuestionId(question8.getId());
-                    option7.setContent("36-36.5°C");
-                    optionService.save(option7);
-                }
-                {
-                    Option option7 = new Option();
-                    option7.setNumber("3");
-                    option7.setQuestionId(question8.getId());
-                    option7.setContent("36.5-37°C");
-                    optionService.save(option7);
-                }
-                {
-                    Option option7 = new Option();
-                    option7.setNumber("4");
-                    option7.setQuestionId(question8.getId());
-                    option7.setContent("37-37.5°C");
-                    optionService.save(option7);
-                }
-                {
-                    Option option7 = new Option();
-                    option7.setNumber("5");
-                    option7.setQuestionId(question8.getId());
-                    option7.setContent("37.5-38°C");
-                    optionService.save(option7);
-                }
-                {
-                    Option option7 = new Option();
-                    option7.setNumber("6");
-                    option7.setQuestionId(question8.getId());
-                    option7.setContent("38°C以上");
-                    optionService.save(option7);
-                }
-
-                // 6
+                // 7
                 Question question9 = new Question();
                 question9.setType(15);
                 question9.setContent("您当前所处位置");
                 question9.setQuestionnaire(questionnaire.getId());
                 question9.setRequired(1);
+                question9.setNumber(7L);
 
                 break;
 
