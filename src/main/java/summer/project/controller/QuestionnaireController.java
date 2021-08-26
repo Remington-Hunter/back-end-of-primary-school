@@ -98,7 +98,6 @@ public class QuestionnaireController {
             questionnaireService.save(questionnaire);
             switch (questionnaire.getType()) {
                 case 1:
-                case 2:
                     Question question = new Question();
                     question.setQuestionnaire(questionnaire.getId());
                     question.setNumber(1L);
@@ -115,6 +114,39 @@ public class QuestionnaireController {
                     option1.setQuestionId(question.getId());
                     optionService.save(option1);
                     break;
+                case 2:
+                    Question question1 = new Question();
+                    question1.setNumber(1L);
+                    question1.setContent("请输入您的姓名：");
+                    question1.setType(2);
+                    question1.setQuestionnaire(questionnaire.getId());
+                    questionService.save(question1);
+
+                    Question question2 = new Question();
+                    question2.setNumber(2L);
+                    question2.setContent("请输入您的手机号：");
+                    question2.setType(2);
+                    question2.setQuestionnaire(questionnaire.getId());
+                    questionService.save(question2);
+
+
+                    Question question3 = new Question();
+                    question3.setQuestionnaire(questionnaire.getId());
+                    question3.setNumber(3L);
+                    question3.setType(10);
+                    questionService.save(question3);
+                    Option option2 = new Option();
+                    option2.setContent("选项一");
+                    option2.setNumber("0");
+                    option2.setQuestionId(question3.getId());
+                    optionService.save(option2);
+                    Option option3 = new Option();
+                    option3.setContent("选项二");
+                    option3.setNumber("1");
+                    option3.setQuestionId(question3.getId());
+                    optionService.save(option3);
+
+
             }
 
 
