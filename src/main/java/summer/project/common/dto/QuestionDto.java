@@ -42,4 +42,7 @@ public class QuestionDto implements Serializable {
 
     @Builder.Default
     private String comment = "";
+
+    private String analysis;
+
 }
