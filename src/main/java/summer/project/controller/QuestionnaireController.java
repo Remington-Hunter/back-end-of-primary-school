@@ -32,6 +32,7 @@ import summer.project.util.ShiroUtil;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -92,7 +93,8 @@ public class QuestionnaireController {
                     questionnaireDto.getNeedNum(),
                     questionnaireDto.getLimit(),
                     questionnaireDto.getType(),
-                    questionnaireDto.getCanSee()
+                    questionnaireDto.getCanSee(),
+                    questionnaireDto.getDisorder()
             );
 
             questionnaireService.save(questionnaire);
@@ -686,6 +688,9 @@ public class QuestionnaireController {
             questions.add(qMap);
         }
 
+        if (questionnaire.getDisorder() == 1) {
+            Collections.shuffle(questions);
+        }
 
         HashMap<String, Object> result = new HashMap<>();
         result.put("questionnaire", questionnaire);
@@ -729,6 +734,7 @@ public class QuestionnaireController {
                         .set(Questionnaire::getType, questionnaireDto.getType())
                         .set(Questionnaire::getDescription, questionnaireDto.getDescription())
                         .set(Questionnaire::getCanSee, questionnaireDto.getCanSee())
+                        .set(Questionnaire::getDisorder, questionnaireDto.getDisorder())
                         .eq(Questionnaire::getId, questionnaireDto.getId())
         );
         List<Question> questionList = questionService.list(new QueryWrapper<Question>().eq("questionnaire", questionnaire.getId()));
