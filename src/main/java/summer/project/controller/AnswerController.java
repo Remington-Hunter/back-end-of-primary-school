@@ -79,7 +79,7 @@ public class AnswerController {
         }
 
         if (byGrade != null && byGrade == 1) {
-            answerInfo.sort((o1, o2) -> ((AnswerList) o2.get("answerList")).getPoint() - ((AnswerList) o1.get("answerList")).getPoint());
+            answerInfo.sort((o1, o2) -> ((AnswerList) o2.get("info")).getPoint() - ((AnswerList) o1.get("info")).getPoint());
         }
         result.put("answerInfo", answerInfo);
 
