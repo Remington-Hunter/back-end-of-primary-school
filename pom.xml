@@ -288,7 +288,7 @@
                     <!-- 在服务器执行的命令集合 -->
                     <commands>
                         <!-- 杀死原来的jar进程 -->
-                        <command>pkill -f ${pack-name}</command>
+                        <command>pkill -f ${pack-name} > /dev/null</command>
                         <!-- 重新启动jar进程，程序的输出结果写到log文件中 -->
                         <command>
                             <![CDATA[nohup java -jar ${service-path}/${pack-name} --spring.profiles.active=dev > ${service-path}/bd.log 2>&1 & ]]></command>
