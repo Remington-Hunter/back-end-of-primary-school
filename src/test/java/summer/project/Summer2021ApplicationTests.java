@@ -21,9 +21,6 @@ class Summer2021ApplicationTests {
     @Test
     void testLong() {
         Long a = null;
-        if (a == 1) {
-            System.out.println(1);
-        }
     }
 
 }
