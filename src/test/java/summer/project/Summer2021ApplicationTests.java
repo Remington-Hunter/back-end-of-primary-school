@@ -18,4 +18,12 @@ class Summer2021ApplicationTests {
         EmailUtil.sendEmail("2320092610@qq.com", "4312");
     }
 
+    @Test
+    void testLong() {
+        Long a = null;
+        if (a == 1) {
+            System.out.println(1);
+        }
+    }
+
 }

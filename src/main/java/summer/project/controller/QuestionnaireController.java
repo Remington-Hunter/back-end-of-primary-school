@@ -689,7 +689,7 @@ public class QuestionnaireController {
             questions.add(qMap);
         }
 
-        if (questionnaire.getDisorder() == 1) {
+        if (questionnaire.getDisorder()!= null && questionnaire.getDisorder() == 1) {
             Collections.shuffle(questions);
 
             for (int i = 0; i < questions.size(); i++) {
