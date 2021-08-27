@@ -289,12 +289,13 @@
                     <commands>
                         <!-- 杀死原来的jar进程 -->
                         <!--<command>pkill -f ${pack-name} > /dev/null</command>-->
-                        <command>lsof -i:8081 |  awk '{print $2}' |xargs | awk '{print $2}' |xargs kill -9 2> /dev/null</command>
+                        <!--<command>lsof -i:8081 |  awk '{print $2}' |xargs | awk '{print $2}' |xargs kill -9 2> /dev/null</command>-->
                         <!-- 重新启动jar进程，程序的输出结果写到log文件中 -->
-                        <command>
-                            <![CDATA[nohup java -jar ${service-path}/${pack-name} --spring.profiles.active=dev > ${service-path}/bd.log 2>&1 & ]]></command>
-                        <command><![CDATA[netstat -nptl]]></command>
-                        <command><![CDATA[ps -ef | grep java | grep -v grep]]></command>
+                        <!--<command>-->
+                        <!--    <![CDATA[nohup java -jar ${service-path}/${pack-name} &#45;&#45;spring.profiles.active=dev > ${service-path}/bd.log 2>&1 & ]]></command>-->
+                        <!--<command><![CDATA[netstat -nptl]]></command>-->
+                        <!--<command><![CDATA[ps -ef | grep java | grep -v grep]]></command>-->
+                        <command>sh backend.sh</command>
                     </commands>
                     <!-- 显示运行命令的输出结果 -->
                     <displayCommandOutputs>true</displayCommandOutputs>
