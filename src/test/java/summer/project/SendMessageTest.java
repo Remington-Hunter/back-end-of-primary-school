@@ -87,7 +87,7 @@ public class SendMessageTest {
 
     @Test
     public void sendPhoneTextMsg() {
-        Sms sms = new Sms("赵宸个人学生作业", templateId+"",new String[]{"8618382366108","8618813046139", "8618609719987"}, new String[]{"1234"});
+        Sms sms = new Sms("赵宸个人学生作业", templateId+"",new String[]{"8215166680628"}, new String[]{"1234"});
         try {
             /* 必要步骤：
              * 实例化一个认证对象，入参需要传入腾讯云账户密钥对 secretId 和 secretKey
