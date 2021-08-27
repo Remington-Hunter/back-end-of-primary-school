@@ -111,7 +111,8 @@ public class AnswerController {
         for (Question question : questionList) {
             HashMap<String, Object> q = new HashMap<>();
 
-            switch (question.getType()) {
+            Integer type = question.getType();
+            switch (type) {
                 case 0:
                 case 1:
                 case 3:
@@ -122,9 +123,12 @@ public class AnswerController {
                 case 9:
                 case 10:
                 case 11:
+                case 12:
+                case 13:
                     List<Option> optionList = optionService.list(new QueryWrapper<Option>().eq("question_id", question.getId()));
                     q.put("optionList", optionList);
                     break;
+
                 default:
                     List<Answer> answerList = answerService.list(new QueryWrapper<Answer>().eq("question_id", question.getId()));
                     q.put("answerList", answerList);
@@ -132,6 +136,25 @@ public class AnswerController {
 
             }
 
+            if (type == 12 || type == 13) {
+                List<Answer> answerList = answerService.list(new QueryWrapper<Answer>().eq("question_id", question.getId()));
+                int count = 0;
+                for (Answer answer : answerList) {
+                    if (question.getAnswer().equals(answer.getNumber())) {
+                        count++;
+                    }
+                }
+                question.setRate(1.0*count/answerList.size());
+            }else if (type == 14) {
+                List<Answer> answerList = answerService.list(new QueryWrapper<Answer>().eq("question_id", question.getId()));
+                int count = 0;
+                for (Answer answer : answerList) {
+                    if (question.getAnswer().equals(answer.getContent())) {
+                        count++;
+                    }
+                }
+                question.setRate(1.0*count/answerList.size());
+            }
 
             q.put("question", question);
             r.add(q);
