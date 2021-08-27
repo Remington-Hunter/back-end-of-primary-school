@@ -63,7 +63,7 @@ public class AnswerController {
     @RequiresAuthentication
     @ApiOperation(value = "查看统计结果，答卷为单位", notes = "直接发form data的问卷id，名字就叫id")
     @PostMapping("/get_result_by_questionnaire")
-    public Result getResultByQuestionnaire(@ApiParam(value = "问卷id", required = true) Long id) {
+    public Result getResultByQuestionnaire(@ApiParam(value = "问卷id", required = true) Long id, @ApiParam(value = "对于考试问卷，如果是1，就是成绩排序") Long byGrade) {
         Questionnaire questionnaire = questionnaireService.getById(id);
         Assert.notNull(questionnaire, "不存在该问卷");
 
@@ -78,7 +78,9 @@ public class AnswerController {
             answerInfo.add(an);
         }
 
-        answerInfo.sort((o1, o2) -> ((AnswerList) o2.get("answerList")).getPoint() - ((AnswerList) o1.get("answerList")).getPoint());
+        if (byGrade != null && byGrade == 1) {
+            answerInfo.sort((o1, o2) -> ((AnswerList) o2.get("answerList")).getPoint() - ((AnswerList) o1.get("answerList")).getPoint());
+        }
         result.put("answerInfo", answerInfo);
 
         List<Question> questions = questionService.list(new QueryWrapper<Question>().eq("questionnaire", questionnaire.getId()));
