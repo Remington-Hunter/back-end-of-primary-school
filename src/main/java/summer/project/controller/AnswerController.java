@@ -232,6 +232,8 @@ public class AnswerController {
                 case 9:
                 case 10:
                 case 11:
+                case 12:
+                case 13:
                     for (Character ch : answerDto.getNumber().toCharArray()) {
                         for (Option option : optionList) {
                             if (option.getNumber().charAt(0) == ch) {
