@@ -27,9 +27,7 @@ import summer.project.service.*;
 import summer.project.util.ShiroUtil;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * <p>
@@ -72,13 +70,15 @@ public class AnswerController {
         Assert.isTrue(questionnaire.getUserId().equals(ShiroUtil.getProfile().getId()), "您无权查看此问卷！");
         HashMap<String, Object> result = new HashMap<>();
         List<AnswerList> answerListList = answerListService.list(new QueryWrapper<AnswerList>().eq("questionnaire", questionnaire.getId()));
-        List<Object> answerInfo = new ArrayList<>();
+        List<HashMap<String, Object>> answerInfo = new ArrayList<>();
         for (AnswerList answerList : answerListList) {
             HashMap<String, Object> an = new HashMap<>();
             an.put("info", answerList);
             an.put("answerList", answerService.list(new QueryWrapper<Answer>().eq("answer_list_id", answerList.getId())));
             answerInfo.add(an);
         }
+
+        answerInfo.sort(Comparator.comparingInt(o -> ((AnswerList) o.get("answerList")).getPoint()));
         result.put("answerInfo", answerInfo);
 
         List<Question> questions = questionService.list(new QueryWrapper<Question>().eq("questionnaire", questionnaire.getId()));
