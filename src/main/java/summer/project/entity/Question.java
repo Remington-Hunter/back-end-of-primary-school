@@ -69,6 +69,8 @@ public class Question implements Serializable {
 
     private String analysis;
 
+    private Double rate;
+
     public Question(String content, String answer, Long point, Integer type, Long number, Integer required, String comment) {
         this.content = content;
         this.answer = answer;
