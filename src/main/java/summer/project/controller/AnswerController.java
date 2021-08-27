@@ -78,7 +78,7 @@ public class AnswerController {
             answerInfo.add(an);
         }
 
-        answerInfo.sort(Comparator.comparingInt(o -> ((AnswerList) o.get("answerList")).getPoint()));
+        answerInfo.sort((o1, o2) -> ((AnswerList) o2.get("answerList")).getPoint() - ((AnswerList) o1.get("answerList")).getPoint());
         result.put("answerInfo", answerInfo);
 
         List<Question> questions = questionService.list(new QueryWrapper<Question>().eq("questionnaire", questionnaire.getId()));
@@ -86,7 +86,7 @@ public class AnswerController {
         for (Question question : questions) {
             HashMap<String, Object> an = new HashMap<>();
             an.put("info", question);
-            an.put("optionList", optionService.list(new QueryWrapper<Option>().eq("question_id",question.getId())));
+            an.put("optionList", optionService.list(new QueryWrapper<Option>().eq("question_id", question.getId())));
             questionInfo.add(an);
         }
         result.put("questionInfo", questionInfo);
@@ -144,8 +144,8 @@ public class AnswerController {
                         count++;
                     }
                 }
-                question.setRate(1.0*count/answerList.size());
-            }else if (type == 14) {
+                question.setRate(1.0 * count / answerList.size());
+            } else if (type == 14) {
                 List<Answer> answerList = answerService.list(new QueryWrapper<Answer>().eq("question_id", question.getId()));
                 int count = 0;
                 for (Answer answer : answerList) {
@@ -153,7 +153,7 @@ public class AnswerController {
                         count++;
                     }
                 }
-                question.setRate(1.0*count/answerList.size());
+                question.setRate(1.0 * count / answerList.size());
             }
 
             q.put("question", question);
