@@ -16,7 +16,7 @@
     <properties>
         <java.version>1.8</java.version>
         <!--服务器项目运行的地址-->
-        <service-path>~/Project/summer2021/</service-path>
+        <service-path>:~/Project/summer2021/</service-path>
         <pack-name>${project.artifactId}-${project.version}.jar</pack-name>
         <!--ssh登录服务器的ip和端口 端口一般默认22-->
         <remote-addr>82.157.97.70:22</remote-addr>
