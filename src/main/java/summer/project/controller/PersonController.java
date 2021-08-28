@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
@@ -69,7 +70,7 @@ public class PersonController {
 
     @PostMapping("/lead_in_list")
     @ApiOperation(value = "导入新的人员名单，json")
-    public Result leadInList(@ApiParam("校验实体") PersonListDto personListDto) {
+    public Result leadInList(@ApiParam("校验实体") @RequestBody  PersonListDto personListDto) {
         personService.remove(new QueryWrapper<Person>().eq("questionnaire", personListDto.getQuestionnaireId()));
 
         for (Person person : personListDto.getPersonList()) {
