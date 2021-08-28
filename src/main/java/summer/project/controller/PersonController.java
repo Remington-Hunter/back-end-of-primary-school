@@ -83,7 +83,7 @@ public class PersonController {
         Set<String> set = new HashSet<>(128);
 
         for (Person person : personListDto.getPersonList()) {
-            if (person.getName().equals(hashMap.get(person.getStuId()))) {
+            if (hashMap.get(person.getStuId()) != null) {
                 set.add(person.getStuId());
             } else {
                 hashMap.put(person.getStuId(), person.getName());
@@ -140,7 +140,7 @@ public class PersonController {
         Set<String> set = new HashSet<>(128);
 
         for (PersonExcelModel person : list) {
-            if (person.getName().equals(hashMap.get(person.getStuId()))) {
+            if (hashMap.get(person.getStuId()) != null) {
                 set.add(person.getStuId());
             } else {
                 hashMap.put(person.getStuId(), person.getName());
