@@ -60,7 +60,7 @@ public class PersonController {
         System.out.println(LocalDateTime.now().toLocalDate());
         answerListList.removeIf(answerList -> !answerList.getSubmitTime().toLocalDate().equals(LocalDateTime.now().toLocalDate()));
         for (AnswerList answerList : answerListList) {
-            Question stuIdQuestion = questionService.getOne(new QueryWrapper<Question>().eq("questionnaire", questionnaireId).eq("number", 2L));
+            Question stuIdQuestion = questionService.getOne(new QueryWrapper<Question>().eq("questionnaire", questionnaireId).eq("number", 2));
 
             String stuId = answerService.getOne(new QueryWrapper<Answer>().eq("question_id", stuIdQuestion.getId()).eq("answer_list_id", answerList.getId())).getContent();
 
