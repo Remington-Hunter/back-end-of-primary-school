@@ -31,10 +31,7 @@ import summer.project.util.CopyUtil;
 import summer.project.util.ShiroUtil;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * <p>
@@ -702,7 +699,7 @@ public class QuestionnaireController {
 
     @PostMapping("/get_questionnaire")
     @ApiOperation(value = "得到问卷", notes = "把链接/vj/后面的那一串码抠出来发过来")
-    public Result getQuestionnaire(@ApiParam(value = "xx_xxxxx的码", required = true) String md5) {
+    public Result getQuestionnaire(@ApiParam(value = "xx_xxxxx的码", required = true) String md5, @ApiParam(value = "随机的种子") Integer seed) {
         Questionnaire questionnaire = questionnaireService.getOne(new QueryWrapper<Questionnaire>().eq("url", md5));
 
 //        Assert.notNull(questionnaire, "链接已失效");
@@ -721,7 +718,7 @@ public class QuestionnaireController {
         }
 
         if (questionnaire.getDisorder()!= null && questionnaire.getDisorder() == 1) {
-            Collections.shuffle(questions);
+            Collections.shuffle(questions, new Random(seed));
 
             for (int i = 0; i < questions.size(); i++) {
                 ((Question) questions.get(i).get("question")).setNumber((long) i);
@@ -908,11 +905,6 @@ public class QuestionnaireController {
         Assert.notNull(questionnaire, "问卷不存在");
         Assert.isTrue(userId.equals(questionnaire.getUserId()), "你无权操作此问卷！");
 
-//        DefaultTransactionDefinition defaultTransactionDefinition = new DefaultTransactionDefinition();
-//        defaultTransactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-//        TransactionStatus status = transactionManager.getTransaction(defaultTransactionDefinition);
-
-//        try {
         questionnaire.setCreateTime(LocalDateTime.now());
         questionnaireService.updateById(questionnaire);
         List<Question> questionList = questionService.list(new QueryWrapper<Question>().eq("questionnaire", id));
