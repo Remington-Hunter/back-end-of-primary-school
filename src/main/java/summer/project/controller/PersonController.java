@@ -80,4 +80,12 @@ public class PersonController {
         return Result.succeed(200, "导入成功", null);
     }
 
+
+    @PostMapping("/get_all_list")
+    @ApiOperation(value = "导出所有名单")
+    public Result leadInList(@ApiParam("问卷id") Long questionnaireId) {
+
+
+        return Result.succeed(200, "导出成功", personService.list(new QueryWrapper<Person>().eq("questionnaire", questionnaireId)));
+    }
 }
