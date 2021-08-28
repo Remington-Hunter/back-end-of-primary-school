@@ -22,6 +22,7 @@ import summer.project.service.AnswerService;
 import summer.project.service.PersonService;
 import summer.project.service.QuestionService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -55,6 +56,7 @@ public class PersonController {
     public Result checkoutNotPunch(@ApiParam(value = "questionnaireId->问卷id") Long questionnaireId) {
         List<Person> personList = personService.list(new QueryWrapper<Person>().eq("questionnaire", questionnaireId));
         List<AnswerList> answerListList = answerListService.list(new QueryWrapper<AnswerList>().eq("questionnaire", questionnaireId));
+        answerListList.removeIf(answerList -> answerList.getSubmitTime().toLocalDate().equals(LocalDateTime.now().toLocalDate()));
         for (AnswerList answerList : answerListList) {
             Question nameQuestion = questionService.getOne(new QueryWrapper<Question>().eq("questionnaire", questionnaireId).eq("number", 1L));
             Question stuIdQuestion = questionService.getOne(new QueryWrapper<Question>().eq("questionnaire", questionnaireId).eq("number", 2L));
