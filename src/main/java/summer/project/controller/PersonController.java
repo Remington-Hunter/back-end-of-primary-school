@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
+import summer.project.common.dto.PersonListDto;
 import summer.project.common.lang.Result;
 import summer.project.entity.Answer;
 import summer.project.entity.AnswerList;
@@ -24,13 +25,13 @@ import java.util.List;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author JerryZhao
  * @since 2021-08-28
  */
-@Api(tags = {"导出名单"})
+@Api(tags = {"导出/导入名单"})
 @RestController
 @RequestMapping("/person")
 public class PersonController {
@@ -66,4 +67,25 @@ public class PersonController {
         return Result.succeed(personList);
     }
 
+    @PostMapping("/lead_in_list")
+    @ApiOperation(value = "导入新的人员名单，json")
+    public Result leadInList(@ApiParam("校验实体") PersonListDto personListDto) {
+        personService.remove(new QueryWrapper<Person>().eq("questionnaire", personListDto.getQuestionnaireId()));
+
+        for (Person person : personListDto.getPersonList()) {
+            person.setQuestionnaire(personListDto.getQuestionnaireId());
+            personService.save(person);
+        }
+
+        return Result.succeed(200, "导入成功", null);
+    }
+
+
+    @PostMapping("/get_all_list")
+    @ApiOperation(value = "导出所有名单")
+    public Result leadInList(@ApiParam("问卷id") Long questionnaireId) {
+
+
+        return Result.succeed(200, "导出成功", personService.list(new QueryWrapper<Person>().eq("questionnaire", questionnaireId)));
+    }
 }
