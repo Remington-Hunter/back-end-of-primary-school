@@ -561,7 +561,7 @@ public class QuestionnaireController {
     )
     public Result getQuestionnaireList() {
         Long userId = ShiroUtil.getProfile().getId();
-        List<Questionnaire> questionnaireList = questionnaireService.list(new QueryWrapper<Questionnaire>().eq("user_id", userId));
+        List<Questionnaire> questionnaireList = questionnaireService.list(new QueryWrapper<Questionnaire>().eq("user_id", userId).eq("deleted", 0));
         return Result.succeed(questionnaireList);
     }
 
