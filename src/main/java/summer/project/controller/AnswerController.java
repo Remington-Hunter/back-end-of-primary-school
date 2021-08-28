@@ -199,6 +199,16 @@ public class AnswerController {
             return Result.fail(400, "问卷填报人数已满。", null);
         }
 
+        Integer punchType = 4;
+
+        if (questionnaire.getType().equals(punchType)) {
+            Question stuIdQuestion = questionService.getOne(new QueryWrapper<Question>().eq("number", 2).eq("questionnaire", questionnaireId));
+            List<Answer> list = answerService.list(new QueryWrapper<Answer>().eq("question_id", stuIdQuestion.getId()).eq("content", answerListDto.getAnswerDtoList().get(1).getContent()));
+            if (list.size() != 0) {
+                return Result.fail(400, "您今日已经打卡。", null);
+            }
+        }
+
 
         for (AnswerDto answerDto : answerListDto.getAnswerDtoList()) {
             Long questionId = answerDto.getQuestionId();
