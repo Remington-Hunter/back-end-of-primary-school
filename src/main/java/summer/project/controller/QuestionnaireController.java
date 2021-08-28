@@ -554,16 +554,30 @@ public class QuestionnaireController {
     }
 
     @RequiresAuthentication
-    @PostMapping("/get_questionnaire_list")
-    @ApiOperation(value = "获得所有的问卷的基本信息", notes = "带着Authorization请求头，不需要参数")
+    @PostMapping("/get_questionnaire_list_not_deleted")
+    @ApiOperation(value = "获得所有不再回收站的问卷的基本信息", notes = "带着Authorization请求头，不需要参数")
     @ApiResponses(
             @ApiResponse(code = 200, message = "你的data长这个样")
     )
-    public Result getQuestionnaireList() {
+    public Result getQuestionnaireListNotStopped() {
         Long userId = ShiroUtil.getProfile().getId();
-        List<Questionnaire> questionnaireList = questionnaireService.list(new QueryWrapper<Questionnaire>().eq("user_id", userId));
+        List<Questionnaire> questionnaireList = questionnaireService.list(new QueryWrapper<Questionnaire>().eq("user_id", userId).eq("deleted", 0));
         return Result.succeed(questionnaireList);
     }
+
+    @RequiresAuthentication
+    @PostMapping("/get_questionnaire_list_deleted")
+    @ApiOperation(value = "获得所有在回收站的问卷的基本信息", notes = "带着Authorization请求头，不需要参数")
+    @ApiResponses(
+            @ApiResponse(code = 200, message = "你的data长这个样")
+    )
+    public Result getQuestionnaireListStopped() {
+        Long userId = ShiroUtil.getProfile().getId();
+        List<Questionnaire> questionnaireList = questionnaireService.list(new QueryWrapper<Questionnaire>().eq("user_id", userId).eq("deleted", 1));
+        return Result.succeed(questionnaireList);
+    }
+
+
 
     @RequiresAuthentication
     @PostMapping("/get_questionnaire_by_id")

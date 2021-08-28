@@ -6,11 +6,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * 解决跨域问题
+ * @author jerryzhao
  */
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
     @Override
-    /*请求跨域*/
+    /**
+     * 请求跨域
+     * */
     public void addCorsMappings(CorsRegistry registry) {
         // 设置允许跨域的路由
         registry.addMapping("/**")
