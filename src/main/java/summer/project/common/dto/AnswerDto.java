@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 
+/**
+ * @author jerryzhao
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

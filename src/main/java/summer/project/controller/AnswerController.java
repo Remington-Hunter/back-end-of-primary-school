@@ -172,9 +172,6 @@ public class AnswerController {
     public Result submitAnswer(@ApiParam(value = "问卷id和答案清单", required = true) @Validated @RequestBody AnswerListDto answerListDto) {
         Long questionnaireId = answerListDto.getQuestionnaireId();
 
-//        DefaultTransactionDefinition defaultTransactionDefinition = new DefaultTransactionDefinition();
-//        defaultTransactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-//        TransactionStatus status = transactionManager.getTransaction(defaultTransactionDefinition);
 
 
         Questionnaire questionnaire = questionnaireService.getById(questionnaireId);
