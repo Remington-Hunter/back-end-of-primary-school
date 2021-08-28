@@ -554,7 +554,7 @@ public class QuestionnaireController {
     }
 
     @RequiresAuthentication
-    @PostMapping("/get_questionnaire_list_not_stopped")
+    @PostMapping("/get_questionnaire_list_not_deleted")
     @ApiOperation(value = "获得所有不再回收站的问卷的基本信息", notes = "带着Authorization请求头，不需要参数")
     @ApiResponses(
             @ApiResponse(code = 200, message = "你的data长这个样")
@@ -566,7 +566,7 @@ public class QuestionnaireController {
     }
 
     @RequiresAuthentication
-    @PostMapping("/get_questionnaire_list_stopped")
+    @PostMapping("/get_questionnaire_list_deleted")
     @ApiOperation(value = "获得所有在回收站的问卷的基本信息", notes = "带着Authorization请求头，不需要参数")
     @ApiResponses(
             @ApiResponse(code = 200, message = "你的data长这个样")
