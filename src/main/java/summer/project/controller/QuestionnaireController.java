@@ -67,7 +67,6 @@ public class QuestionnaireController {
     @Autowired
     QuestionnaireMapper questionnaireMapper;
 
-    //    @Transactional
     @RequiresAuthentication
     @PostMapping("/save_questionnaire")
     @ApiOperation(value = "保存问卷", notes = "发送用户ID（userId），和一个问题的列表，每个问题包含答案（如果必要），具体看下面的描述，" +
@@ -153,6 +152,23 @@ public class QuestionnaireController {
                     option3.setQuestionId(question3.getId());
                     option3.setLimit(10L);
                     optionService.save(option3);
+                    break;
+                case 3:
+                    Question question31 = new Question();
+                    question31.setQuestionnaire(questionnaire.getId());
+                    question31.setNumber(1L);
+                    question31.setContent("请输入您的姓名：");
+                    question31.setRequired(1);
+                    question31.setType(2);
+                    questionService.save(question31);
+
+                    Question question32 = new Question();
+                    question32.setQuestionnaire(questionnaire.getId());
+                    question32.setNumber(2L);
+                    question32.setContent("请输入您的学号：");
+                    question32.setRequired(1);
+                    question32.setType(2);
+                    questionService.save(question32);
                     break;
                 case 4:
                     // 1
@@ -354,6 +370,7 @@ public class QuestionnaireController {
                 questionService.save(question9);
 
                 break;
+                default:
 
             }
 

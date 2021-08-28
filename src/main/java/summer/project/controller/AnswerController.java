@@ -177,7 +177,6 @@ public class AnswerController {
 //        TransactionStatus status = transactionManager.getTransaction(defaultTransactionDefinition);
 
 
-//        try {
         Questionnaire questionnaire = questionnaireService.getById(questionnaireId);
         Assert.notNull(questionnaire, "不存在该问卷");
 
@@ -243,18 +242,14 @@ public class AnswerController {
                         }
                     }
                     break;
-
+                default:
 
             }
 
             answerService.save(answer);
 
         }
-//            transactionManager.commit(status);
-//        } catch (Exception e) {
-//            transactionManager.rollback(status);
-//            throw e;
-//        }
+
         questionnaire.setAnswerNum(questionnaire.getAnswerNum() + 1);
         questionnaireService.updateById(questionnaire);
 
