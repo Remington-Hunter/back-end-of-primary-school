@@ -6,6 +6,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
@@ -46,6 +47,7 @@ public class PersonController {
     @Autowired
     AnswerService answerService;
 
+    @PostMapping("/checkout_not_punch")
     @ApiOperation(value = "导出没打卡的名单, formdata:" +
             "questionnaireId->问卷id")
     public Result checkoutNotPunch(@ApiParam(value = "questionnaireId->问卷id") Long questionnaireId) {
