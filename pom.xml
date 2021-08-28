@@ -166,6 +166,15 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.alibaba/easyexcel -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>easyexcel</artifactId>
+            <version>2.2.4</version>
+        </dependency>
+
+
         <!--&lt;!&ndash;swagger图形化接口&ndash;&gt;-->
         <!--<dependency>-->
         <!--    <groupId>io.springfox</groupId>-->
