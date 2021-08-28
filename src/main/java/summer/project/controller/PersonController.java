@@ -105,7 +105,7 @@ public class PersonController {
 
     @PostMapping("/lead_in_list_by_excel")
     @ApiOperation(value = "导入新的人员名单，json")
-    public Result leadInList(@ApiParam(value = "questionnaireId") @RequestParam("questionnaireId") Long questionnaireId, @ApiParam(value = "file") @RequestParam("file") MultipartFile file) {
+    public Result leadInListByExcel(@ApiParam(value = "questionnaireId") @RequestParam("questionnaireId") Long questionnaireId, @ApiParam(value = "file") @RequestParam("file") MultipartFile file) {
         personService.remove(new QueryWrapper<Person>().eq("questionnaire", questionnaireId));
 
         List<PersonExcelModel> list;
