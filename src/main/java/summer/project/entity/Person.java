@@ -32,4 +32,9 @@ public class Person implements Serializable {
     private Long questionnaire;
 
 
+    public Person(PersonExcelModel person, Long questionnaire) {
+        this.name = person.getName();
+        this.stuId = person.getStuId();
+        this.questionnaire = questionnaire;
+    }
 }
