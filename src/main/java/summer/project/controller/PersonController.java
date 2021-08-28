@@ -23,7 +23,7 @@ import summer.project.service.PersonService;
 import summer.project.service.QuestionService;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.*;
 
 /**
  * <p>
@@ -74,6 +74,24 @@ public class PersonController {
     @ApiOperation(value = "导入新的人员名单，json")
     public Result leadInList(@ApiParam("校验实体") @RequestBody  PersonListDto personListDto) {
         personService.remove(new QueryWrapper<Person>().eq("questionnaire", personListDto.getQuestionnaireId()));
+
+
+        HashMap<String, String> hashMap = new HashMap<>(128);
+
+        Set<String> set = new HashSet<>(128);
+
+        for (Person person : personListDto.getPersonList()) {
+            if (person.getName().equals(hashMap.get(person.getStuId()))) {
+                set.add(person.getStuId());
+            } else {
+                hashMap.put(person.getStuId(), person.getName());
+            }
+        }
+
+        if (set.size() != 0) {
+            return Result.fail("存在冲突的数据。", set);
+        }
+
 
         for (Person person : personListDto.getPersonList()) {
             person.setQuestionnaire(personListDto.getQuestionnaireId());
