@@ -60,13 +60,11 @@ public class PersonController {
         System.out.println(LocalDateTime.now().toLocalDate());
         answerListList.removeIf(answerList -> !answerList.getSubmitTime().toLocalDate().equals(LocalDateTime.now().toLocalDate()));
         for (AnswerList answerList : answerListList) {
-            Question nameQuestion = questionService.getOne(new QueryWrapper<Question>().eq("questionnaire", questionnaireId).eq("number", 1L));
             Question stuIdQuestion = questionService.getOne(new QueryWrapper<Question>().eq("questionnaire", questionnaireId).eq("number", 2L));
 
-            String name = answerService.getOne(new QueryWrapper<Answer>().eq("question_id", nameQuestion.getId()).eq("answer_list_id", answerList.getId())).getContent();
             String stuId = answerService.getOne(new QueryWrapper<Answer>().eq("question_id", stuIdQuestion.getId()).eq("answer_list_id", answerList.getId())).getContent();
 
-            personList.removeIf(person -> person.getName().equals(name) && person.getStuId().equals(stuId));
+            personList.removeIf(person -> person.getStuId().equals(stuId));
         }
 
         return Result.succeed(personList);
