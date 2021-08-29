@@ -18,15 +18,9 @@ import summer.project.common.dto.OptionDto;
 import summer.project.common.dto.QuestionDto;
 import summer.project.common.dto.QuestionnaireDto;
 import summer.project.common.lang.Result;
-import summer.project.entity.Answer;
-import summer.project.entity.Option;
-import summer.project.entity.Question;
-import summer.project.entity.Questionnaire;
+import summer.project.entity.*;
 import summer.project.mapper.QuestionnaireMapper;
-import summer.project.service.AnswerService;
-import summer.project.service.OptionService;
-import summer.project.service.QuestionService;
-import summer.project.service.QuestionnaireService;
+import summer.project.service.*;
 import summer.project.util.CopyUtil;
 import summer.project.util.ShiroUtil;
 
@@ -63,6 +57,9 @@ public class QuestionnaireController {
 
     @Autowired
     QuestionnaireMapper questionnaireMapper;
+
+    @Autowired
+    AnswerListService answerListService;
 
     @RequiresAuthentication
     @PostMapping("/save_questionnaire")
@@ -921,13 +918,9 @@ public class QuestionnaireController {
             }
         }
         questionnaire.setAnswerNum(0L);
+        answerListService.remove(new QueryWrapper<AnswerList>().eq("questionnaire", questionnaire.getId()));
         questionnaireService.updateById(questionnaire);
 
-
-//            transactionManager.commit(status);
-//        } catch (Exception e) {
-//            transactionManager.rollback(status);
-//        }
 
 
         return Result.succeed(201, "操作成功。", id);
