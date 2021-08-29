@@ -10,6 +10,11 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -103,7 +108,26 @@ public class PersonController {
 
     @PostMapping("/lead_in_list_by_excel")
     @ApiOperation(value = "导入新的人员名单，json")
-    public Result leadInListByExcel(@ApiParam(value = "questionnaireId") @RequestParam("questionnaireId") Long questionnaireId, @ApiParam(value = "file") @RequestParam("file") MultipartFile file) {
+    public Result leadInListByExcel(@ApiParam(value = "questionnaireId") @RequestParam("questionnaireId") Long questionnaireId, @ApiParam(value = "file") @RequestParam("file") MultipartFile file) throws IOException {
+
+
+        try {
+            Workbook workbook = new XSSFWorkbook(file.getInputStream());
+
+            if (workbook.getNumberOfSheets() < 1 ) {
+                return Result.fail("名单格式不正确。");
+            }
+            Sheet sheet = workbook.getSheetAt(0);
+            Row row = sheet.getRow(0);
+            String name = row.getCell(0).getStringCellValue();
+            String stuId = row.getCell(1).getStringCellValue();
+            if (!("姓名".equals(name) && "学号".equals(stuId))) {
+                throw new IOException();
+            }
+        } catch (Exception e) {
+            return Result.fail("名单格式不正确");
+        }
+
         personService.remove(new QueryWrapper<Person>().eq("questionnaire", questionnaireId));
 
         List<PersonExcelModel> list;
