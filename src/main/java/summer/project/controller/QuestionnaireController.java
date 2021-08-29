@@ -845,18 +845,18 @@ public class QuestionnaireController {
 //                    answerService.removeByIds(answerList);
 //                }
 
-                for (Answer answer : answerList) {
-                    answerService.removeById(answer.getId());
-                }
+//                for (Answer answer : answerList) {
+//                    answerService.removeById(answer.getId());
+//                }
 
 
 //                if (answerList.size() != 0) {
 //                    optionService.removeByIds(optionList);
 //                }
 
-                for (Option option : optionList) {
-                    optionService.removeById(option.getId());
-                }
+//                for (Option option : optionList) {
+//                    optionService.removeById(option.getId());
+//                }
 
 
                 for (OptionDto optionDto : questionDto.getOptionList()) {
