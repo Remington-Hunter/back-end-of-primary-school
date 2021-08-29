@@ -3,6 +3,9 @@ package summer.project;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+/**
+ * @author jerryzhao
+ */
 @SpringBootApplication
 public class Summer2021Application {
 
