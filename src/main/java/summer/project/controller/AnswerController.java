@@ -58,6 +58,9 @@ public class AnswerController {
     OptionService optionService;
 
     @Autowired
+    PersonService personService;
+
+    @Autowired
     PlatformTransactionManager transactionManager;
 
     @RequiresAuthentication
@@ -202,7 +205,14 @@ public class AnswerController {
         Integer punchType = 4;
 
         if (questionnaire.getType().equals(punchType)) {
+
+
             Question stuIdQuestion = questionService.getOne(new QueryWrapper<Question>().eq("number", 2).eq("questionnaire", questionnaireId));
+            Person person = personService.getOne(new QueryWrapper<Person>().eq("questionnaire", questionnaireId).eq("stu_id", answerListDto.getAnswerDtoList().get(1).getContent()));
+            if (person == null) {
+                return Result.fail("您不在打卡名单内。");
+            }
+
             List<Answer> list = answerService.list(new QueryWrapper<Answer>().eq("question_id", stuIdQuestion.getId()).eq("content", answerListDto.getAnswerDtoList().get(1).getContent()));
             if (list.size() != 0) {
                 return Result.fail(400, "您今日已经打卡。", null);
