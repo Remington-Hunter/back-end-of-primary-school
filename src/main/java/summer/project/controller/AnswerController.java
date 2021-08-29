@@ -176,7 +176,6 @@ public class AnswerController {
         Long questionnaireId = answerListDto.getQuestionnaireId();
 
 
-
         Questionnaire questionnaire = questionnaireService.getById(questionnaireId);
         Assert.notNull(questionnaire, "不存在该问卷");
 
@@ -203,9 +202,6 @@ public class AnswerController {
         answerListService.save(answerList);
 
 
-
-
-
         Integer punchType = 4;
 
         if (questionnaire.getType().equals(punchType)) {
@@ -221,6 +217,23 @@ public class AnswerController {
             if (list.size() != 0) {
                 return Result.fail(400, "您今日已经打卡。", null);
             }
+        }
+
+        Long signNum = 2L;
+        if (questionnaireId.equals(signNum)) {
+            for (AnswerDto answerDto : answerListDto.getAnswerDtoList()) {
+                Long questionId = answerDto.getQuestionId();
+                Question question = questionService.getById(questionId);
+                Assert.notNull(question, "问题不存在");
+
+                List<Option> optionList = optionService.list(new QueryWrapper<Option>().eq("question_id", question.getId()));
+                for (Option option : optionList) {
+                    if (option.getNumber().equals(answerDto.getNumber()) && option.getLimit() <= option.getAnswerNum()) {
+                        return Result.fail(400, "抱歉，第" + questionService.getById(answerDto.getQuestionId()).getNumber() + "题的选择人数已满。", null);
+                    }
+                }
+            }
+
         }
 
 
@@ -239,11 +252,6 @@ public class AnswerController {
             switch (question.getType()) {
                 case 6:
                 case 7:
-                    for (Option option : optionList) {
-                        if (option.getNumber().equals(answerDto.getNumber()) && option.getLimit() <= option.getAnswerNum()) {
-                            return Result.fail(400, "抱歉，第" + questionService.getById(answerDto.getQuestionId()).getNumber() + "题的选择人数已满。", null);
-                        }
-                    }
                 case 0:
                 case 1:
                 case 3:
