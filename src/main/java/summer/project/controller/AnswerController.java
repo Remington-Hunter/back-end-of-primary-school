@@ -183,11 +183,6 @@ public class AnswerController {
         if (questionnaire.getLimit() >= 0 && questionnaire.getLimit() < questionnaire.getAnswerNum()) {
             return Result.fail(400, "问卷填报人数已满。", null);
         }
-        
-        AnswerList answerList = new AnswerList();
-        answerList.setQuestionnaire(questionnaire.getId());
-        answerList.setPoint(answerListDto.getPoint());
-        answerListService.save(answerList);
 
         LocalDateTime now = LocalDateTime.now();
         if (questionnaire.getEndTime() != null && now.isAfter(questionnaire.getEndTime().plusSeconds(5L))) {
@@ -201,6 +196,13 @@ public class AnswerController {
         if (questionnaire.getUsing() != 1) {
             return Result.fail(400, "当前问卷已经停止投放。", null);
         }
+
+        AnswerList answerList = new AnswerList();
+        answerList.setQuestionnaire(questionnaire.getId());
+        answerList.setPoint(answerListDto.getPoint());
+        answerListService.save(answerList);
+
+
 
 
 
