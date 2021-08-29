@@ -716,7 +716,7 @@ public class QuestionnaireController {
             questions.add(qMap);
         }
 
-        if (questionnaire.getDisorder()!= null && questionnaire.getDisorder() == 1) {
+        if (questionnaire.getDisorder()!= null && questionnaire.getDisorder() == 1 && seed != null) {
             Collections.shuffle(questions, new Random(seed));
 
             for (int i = 0; i < questions.size(); i++) {
