@@ -71,13 +71,15 @@ public class AnswerController {
         Assert.notNull(questionnaire, "不存在该问卷");
 
         Assert.isTrue(questionnaire.getUserId().equals(ShiroUtil.getProfile().getId()), "您无权查看此问卷！");
-        HashMap<String, Object> result = new HashMap<>();
+        HashMap<String, Object> result = new HashMap<>(128);
         List<AnswerList> answerListList = answerListService.list(new QueryWrapper<AnswerList>().eq("questionnaire", questionnaire.getId()));
         List<HashMap<String, Object>> answerInfo = new ArrayList<>();
         for (AnswerList answerList : answerListList) {
-            HashMap<String, Object> an = new HashMap<>();
+            HashMap<String, Object> an = new HashMap<>(128);
             an.put("info", answerList);
-            an.put("answerList", answerService.list(new QueryWrapper<Answer>().eq("answer_list_id", answerList.getId())));
+            List<Answer> answers = answerService.list(new QueryWrapper<Answer>().eq("answer_list_id", answerList.getId()));
+            answers.sort((o1, o2) -> (int) (o1.getQuestionId() - o2.getQuestionId()));
+            an.put("answerList", answers);
             answerInfo.add(an);
         }
 
@@ -89,7 +91,7 @@ public class AnswerController {
         List<Question> questions = questionService.list(new QueryWrapper<Question>().eq("questionnaire", questionnaire.getId()));
         List<Object> questionInfo = new ArrayList<>();
         for (Question question : questions) {
-            HashMap<String, Object> an = new HashMap<>();
+            HashMap<String, Object> an = new HashMap<>(128);
             an.put("info", question);
             an.put("optionList", optionService.list(new QueryWrapper<Option>().eq("question_id", question.getId())));
             questionInfo.add(an);
