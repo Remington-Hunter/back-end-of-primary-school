@@ -7,6 +7,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+/**
+ * @author jerryzhao
+ */
 @Configuration
 @EnableTransactionManagement
 @MapperScan("summer.project.mapper")
