@@ -219,19 +219,22 @@ public class AnswerController {
             }
         }
 
-        Long signNum = 2L;
-        if (questionnaireId.equals(signNum)) {
+        Integer signNum = 2;
+        if (questionnaire.getType().equals(signNum)) {
             for (AnswerDto answerDto : answerListDto.getAnswerDtoList()) {
                 Long questionId = answerDto.getQuestionId();
                 Question question = questionService.getById(questionId);
                 Assert.notNull(question, "问题不存在");
 
                 List<Option> optionList = optionService.list(new QueryWrapper<Option>().eq("question_id", question.getId()));
-                for (Option option : optionList) {
-                    if (option.getNumber().equals(answerDto.getNumber()) && option.getLimit() <= option.getAnswerNum()) {
-                        return Result.fail(400, "抱歉，第" + questionService.getById(answerDto.getQuestionId()).getNumber() + "题的选择人数已满。", null);
+                for (Character ch : answerDto.getNumber().toCharArray()) {
+                    for (Option option : optionList) {
+                        if (Character.valueOf(option.getNumber().charAt(0)).equals(ch) && option.getLimit() <= option.getAnswerNum()) {
+                            return Result.fail(400, "抱歉，第" + questionService.getById(answerDto.getQuestionId()).getNumber() + "题的选择人数已满。", null);
+                        }
                     }
                 }
+
             }
 
         }
