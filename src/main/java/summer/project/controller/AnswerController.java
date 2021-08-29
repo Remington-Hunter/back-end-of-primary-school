@@ -180,6 +180,10 @@ public class AnswerController {
         Questionnaire questionnaire = questionnaireService.getById(questionnaireId);
         Assert.notNull(questionnaire, "不存在该问卷");
 
+        if (questionnaire.getLimit() >= 0 && questionnaire.getLimit() < questionnaire.getAnswerNum()) {
+            return Result.fail(400, "问卷填报人数已满。", null);
+        }
+        
         AnswerList answerList = new AnswerList();
         answerList.setQuestionnaire(questionnaire.getId());
         answerList.setPoint(answerListDto.getPoint());
@@ -198,9 +202,7 @@ public class AnswerController {
             return Result.fail(400, "当前问卷已经停止投放。", null);
         }
 
-        if (questionnaire.getLimit() >= 0 && questionnaire.getLimit() < questionnaire.getAnswerNum()) {
-            return Result.fail(400, "问卷填报人数已满。", null);
-        }
+
 
         Integer punchType = 4;
 
