@@ -101,6 +101,7 @@ public class QuestionnaireController {
                     question.setNumber(1L);
                     question.setRequired(1);
                     question.setType(10);
+                    question.setContent("投票题一");
                     questionService.save(question);
                     Option option = new Option();
                     option.setContent("选项一");
@@ -135,6 +136,7 @@ public class QuestionnaireController {
                     question3.setQuestionnaire(questionnaire.getId());
                     question3.setNumber(3L);
                     question3.setRequired(1);
+                    question3.setContent("报名题一");
                     question3.setType(6);
                     questionService.save(question3);
                     Option option2 = new Option();
