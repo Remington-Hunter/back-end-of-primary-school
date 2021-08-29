@@ -211,8 +211,10 @@ public class AnswerController {
             }
 
             List<Answer> list = answerService.list(new QueryWrapper<Answer>().eq("question_id", stuIdQuestion.getId()).eq("content", answerListDto.getAnswerDtoList().get(1).getContent()));
-            if (list.size() != 0) {
-                return Result.fail(400, "您今日已经打卡。", null);
+            for (Answer answer : list) {
+                if (answerListService.getById(answer.getAnswerListId()).getSubmitTime().toLocalDate().equals(LocalDateTime.now().toLocalDate())){
+                    return Result.fail(400, "您今日已经打卡。", null);
+                }
             }
         }
 
