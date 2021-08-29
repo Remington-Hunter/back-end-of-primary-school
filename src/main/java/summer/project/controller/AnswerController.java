@@ -196,10 +196,7 @@ public class AnswerController {
             return Result.fail(400, "当前问卷已经停止投放。", null);
         }
 
-        AnswerList answerList = new AnswerList();
-        answerList.setQuestionnaire(questionnaire.getId());
-        answerList.setPoint(answerListDto.getPoint());
-        answerListService.save(answerList);
+
 
 
         Integer punchType = 4;
@@ -239,6 +236,10 @@ public class AnswerController {
 
         }
 
+        AnswerList answerList = new AnswerList();
+        answerList.setQuestionnaire(questionnaire.getId());
+        answerList.setPoint(answerListDto.getPoint());
+        answerListService.save(answerList);
 
         for (AnswerDto answerDto : answerListDto.getAnswerDtoList()) {
             Long questionId = answerDto.getQuestionId();
