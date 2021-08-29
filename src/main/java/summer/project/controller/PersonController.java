@@ -58,8 +58,6 @@ public class PersonController {
     public Result checkoutNotPunch(@ApiParam(value = "questionnaireId->问卷id") Long questionnaireId) {
         List<Person> personList = personService.list(new QueryWrapper<Person>().eq("questionnaire", questionnaireId));
         List<AnswerList> answerListList = answerListService.list(new QueryWrapper<AnswerList>().eq("questionnaire", questionnaireId));
-        System.out.println(answerListList.get(0).getSubmitTime().toLocalDate());
-        System.out.println(LocalDateTime.now().toLocalDate());
         answerListList.removeIf(answerList -> !answerList.getSubmitTime().toLocalDate().equals(LocalDateTime.now().toLocalDate()));
         for (AnswerList answerList : answerListList) {
             Question stuIdQuestion = questionService.getOne(new QueryWrapper<Question>().eq("questionnaire", questionnaireId).eq("number", 2));
