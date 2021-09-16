@@ -25,8 +25,10 @@ public class DownloadController {
         File file = new File(pathname + filename);
         //File file = new File(realPath , fileName);
         if (file.exists()) {
-//                response.setContentType("application/force-download");// 设置强制下载不打开
-//                response.addHeader("Content-Disposition", "attachment;fileName=" + fileName);// 设置文件名
+            response.setContentType("application/force-download");
+            // 设置强制下载不打开
+            response.addHeader("Content-Disposition", "attachment;fileName=" + filename);
+            // 设置文件名
             byte[] buffer = new byte[1024];
             FileInputStream fis = null;
             BufferedInputStream bis = null;
