@@ -23,11 +23,13 @@ public class DownloadController {
     public Result download(@RequestParam("filename") String filename, HttpServletResponse response) {
         //设置文件路径
         File file = new File(pathname + filename);
+        long length = file.length();
         //File file = new File(realPath , fileName);
         if (file.exists()) {
             response.setContentType("application/force-download");
             // 设置强制下载不打开
             response.addHeader("Content-Disposition", "attachment;fileName=" + filename);
+            response.addHeader("Content-Length", String.valueOf(length));
             // 设置文件名
             byte[] buffer = new byte[1024];
             FileInputStream fis = null;
